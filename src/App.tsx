@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { ReviewOutput } from './components/ReviewOutput';
 import { ApiKeySetup } from './components/ApiKeySetup';
+import { MistralApiService } from './services/mistralApi';
+import { PdfProcessor } from './services/pdfProcessor';
 import { FileText, Upload } from 'lucide-react';
 
 function App() {
@@ -10,52 +12,76 @@ function App() {
   const [supportingFiles, setSupportingFiles] = useState<File[]>([]);
   const [reviewOutput, setReviewOutput] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState<string>('');
 
   const handleAnalyze = async () => {
     if (!formPdf || !apiKey) return;
 
     setIsAnalyzing(true);
+    setReviewOutput('');
+    
     try {
-      // This would normally call the Mistral API with model: 'mistral-ocr-latest' and temperature: 0.8
-      // For now, we'll show a placeholder response
-      const mockResponse = `
-# Executive Summary
+      const mistralService = new MistralApiService(apiKey);
+      const pdfProcessor = new PdfProcessor();
 
-The Form APR has been analyzed for compliance with FEMA regulations and RBI guidelines. Several areas require attention before submission.
+      // Step 1: Process the main Form APR
+      setAnalysisProgress('Processing Form APR document...');
+      const mainPdfContent = await pdfProcessor.processPdf(formPdf);
+      
+      console.log('Main PDF processed:', {
+        textLength: mainPdfContent.textContent.length,
+        imageCount: mainPdfContent.images.length,
+        pageCount: mainPdfContent.pageCount
+      });
 
-## Key Findings
+      // Step 2: Process supporting documents
+      let supportingContent = '';
+      if (supportingFiles.length > 0) {
+        setAnalysisProgress('Processing supporting documents...');
+        supportingContent = await pdfProcessor.processMultipleFiles(supportingFiles);
+      }
 
-- **Missing Documentation**: Share certificates not provided
-- **Inconsistency Found**: Section VI dividend amounts don't match bank statements
-- **Compliance Issue**: UIN format requires verification
+      // Step 3: Perform OCR on images if needed
+      let ocrContent = '';
+      if (mainPdfContent.images.length > 0) {
+        setAnalysisProgress('Performing OCR on document images...');
+        try {
+          ocrContent = await mistralService.performOCR(mainPdfContent.images);
+          console.log('OCR completed, content length:', ocrContent.length);
+        } catch (ocrError) {
+          console.warn('OCR failed, continuing with text-only analysis:', ocrError);
+        }
+      }
 
-## Detailed Review
+      // Step 4: Combine all content
+      const fullContent = `
+MAIN FORM APR DOCUMENT:
+${mainPdfContent.textContent}
 
-### Section I - APR Period
-- **Status**: ✅ OK
-- **Finding**: Reporting period correctly covers full financial year
+${ocrContent ? `\nOCR EXTRACTED CONTENT:\n${ocrContent}` : ''}
 
-### Section II - UIN Details
-- **Status**: ⚠️ Requires Verification
-- **Finding**: UIN format needs validation against RBI allotment letter
+${supportingContent ? `\nSUPPORTING DOCUMENTS:\n${supportingContent}` : ''}
+      `.trim();
 
-### Section III - Capital Structure
-- **Status**: ❌ Incomplete
-- **Finding**: Supporting share certificates missing
+      console.log('Full content prepared for analysis, length:', fullContent.length);
 
-## Overall Assessment
+      // Step 5: Analyze with Mistral
+      setAnalysisProgress('Analyzing document for FEMA compliance...');
+      const analysis = await mistralService.analyzeDocument(
+        fullContent,
+        [], // Images already processed via OCR
+        'mistral-large-latest'
+      );
 
-**Status**: File with Minor Fixes
-
-Please address the identified issues before final submission to the RBI portal.
-      `;
-
-      setTimeout(() => {
-        setReviewOutput(mockResponse);
-        setIsAnalyzing(false);
-      }, 3000);
+      setReviewOutput(analysis);
+      setAnalysisProgress('');
+      
     } catch (error) {
       console.error('Analysis failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setReviewOutput(`# Analysis Failed\n\n**Error:** ${errorMessage}\n\nPlease check your API key and try again. If the problem persists, the document might be too large or corrupted.`);
+      setAnalysisProgress('');
+    } finally {
       setIsAnalyzing(false);
     }
   };
@@ -93,7 +119,7 @@ Please address the identified issues before final submission to the RBI portal.
             </h2>
           </div>
           <p className="text-lg text-text-light">
-            AI-driven FEMA compliance review
+            AI-driven FEMA compliance review powered by Mistral OCR
           </p>
         </div>
 
@@ -125,12 +151,21 @@ Please address the identified issues before final submission to the RBI portal.
               {isAnalyzing ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Analyzing Documents...
+                  {analysisProgress || 'Analyzing Documents...'}
                 </div>
               ) : (
                 'Start Analysis'
               )}
             </button>
+
+            {/* Progress Info */}
+            {isAnalyzing && analysisProgress && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-800 font-medium">
+                  {analysisProgress}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Main Content */}
