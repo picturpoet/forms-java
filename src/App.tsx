@@ -100,10 +100,12 @@ function App() {
       <header className="bg-primary-600 shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            {/* Logo - Replace this div with your actual logo */}
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <div className="w-6 h-6 bg-primary-600 rounded"></div>
-            </div>
+            {/* Logo */}
+            <img 
+              src="/logo.png" 
+              alt="Regality AI Logo" 
+              className="w-10 h-10 rounded-lg"
+            />
             
             {/* Brand Name */}
             <h1 className="text-white text-2xl font-garamond font-medium">
