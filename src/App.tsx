@@ -13,6 +13,7 @@ function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [isUploadSectionCollapsed, setIsUploadSectionCollapsed] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   const handleAnalyze = async () => {
     if (!formPdf || !apiKey) return;
@@ -100,12 +101,19 @@ function App() {
       <header className="bg-primary-600 shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            {/* Logo */}
-            <img 
-              src="/logo.png" 
-              alt="Regality AI Logo" 
-              className="w-10 h-10 rounded-lg"
-            />
+            {/* Logo with fallback */}
+            {!logoError ? (
+              <img 
+                src="/logo.png" 
+                alt="Regality AI Logo" 
+                className="w-10 h-10 rounded-lg object-cover"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-primary-600 rounded"></div>
+              </div>
+            )}
             
             {/* Brand Name */}
             <h1 className="text-white text-2xl font-garamond font-medium">
