@@ -6,7 +6,7 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3+-blue.svg)
 
 **Version:** v2.0  
-**Author:** Srinivas Maddury  
+**Author:** Raghuveer Nishtala
 **Date:** January 2025
 
 ---
