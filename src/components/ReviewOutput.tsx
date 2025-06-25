@@ -98,7 +98,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-semibold text-red-800 flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
-                      <AlertCircle className="w-5 h-5 text-white" />
+                      <AlertCircle className="w-5 h-5 text-white" strokeWidth={2} />
                     </div>
                     {text}
                   </h3>
@@ -108,7 +108,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                     onClick={() => copyToClipboard(cleanContent, 'deficiency-list')}
                     className="bg-red-100 hover:bg-red-200 text-red-700 border-red-300"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-4 h-4" strokeWidth={2} />
                     {copiedSection === 'deficiency-list' ? 'Copied!' : 'Copy List'}
                   </Button>
                 </div>
@@ -120,7 +120,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                 </div>
                 
                 <p className="text-xs text-red-600 mt-4 flex items-center gap-2">
-                  <AlertCircle className="w-3 h-3" />
+                  <AlertCircle className="w-3 h-3" strokeWidth={2} />
                   Copy this list to share with your client or compliance team
                 </p>
               </div>
@@ -188,8 +188,8 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                 isSuccess ? 'bg-mna-yellow' : isError ? 'bg-red-500' : 'bg-mna-orange'
               }`}>
-                {isSuccess && <CheckCircle className="w-5 h-5 text-white" />}
-                {(isWarning || isError) && <AlertCircle className="w-5 h-5 text-white" />}
+                {isSuccess && <CheckCircle className="w-5 h-5 text-white" strokeWidth={2} />}
+                {(isWarning || isError) && <AlertCircle className="w-5 h-5 text-white" strokeWidth={2} />}
               </div>
               <div className="text-text leading-relaxed flex-1">
                 {processInlineMarkdown(line)}
@@ -246,7 +246,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
             <div key={currentIndex} className="mb-8 overflow-x-auto">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
-                  <Table className="w-4 h-4 text-white" />
+                  <Table className="w-4 h-4 text-white" strokeWidth={2} />
                 </div>
                 <span className="text-lg font-semibold text-text">Review Table</span>
               </div>
@@ -295,7 +295,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
 
   if (isAnalyzing) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-16 text-center loading">
         <div className="w-20 h-20 border-4 border-brand-light border-t-brand-dark rounded-full animate-spin mb-6"></div>
         <h3 className="text-2xl font-semibold text-text mb-4">
           AI Analysis in Progress
@@ -304,7 +304,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           Our Mistral AI is processing your documents with OCR technology for comprehensive FEMA compliance review...
         </p>
         <div className="flex items-center gap-3 text-brand-dark bg-brand-light rounded-xl px-6 py-3">
-          <Clock className="w-5 h-5" />
+          <Clock className="w-5 h-5" strokeWidth={2} />
           <span className="font-medium">This may take 1-3 minutes depending on document complexity</span>
         </div>
       </div>
@@ -315,7 +315,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="w-20 h-20 bg-brand-light rounded-2xl flex items-center justify-center mb-6">
-          <FileText className="w-10 h-10 text-brand-dark" />
+          <FileText className="w-10 h-10 text-brand-dark" strokeWidth={2} />
         </div>
         <h3 className="text-2xl font-semibold text-text mb-4">
           Ready for Analysis
@@ -336,7 +336,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           variant="secondary"
           className="bg-mna-yellow hover:bg-mna-orange text-white shadow-card"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4" strokeWidth={2} />
           Download Report
         </Button>
       </div>
@@ -350,7 +350,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
       <div className="mt-12 p-8 bg-gradient-to-r from-brand-light to-brand-light/50 rounded-2xl border border-brand-dark/20 shadow-card">
         <div className="flex items-center gap-4 mb-3">
           <div className="w-10 h-10 bg-brand-dark rounded-xl flex items-center justify-center">
-            <Brain className="w-5 h-5 text-white" />
+            <Brain className="w-5 h-5 text-white" strokeWidth={2} />
           </div>
           <span className="text-lg font-semibold text-brand-dark">Analysis completed using Mistral AI with OCR technology</span>
         </div>

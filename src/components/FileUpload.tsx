@@ -40,7 +40,7 @@ export function FileUpload({
         <label className="block text-sm font-semibold text-text mb-3">
           Form APR (Required)
         </label>
-        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 bg-gradient-to-br from-brand-light/20 to-transparent">
+        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 bg-gradient-to-br from-brand-light/20 to-transparent cursor-pointer">
           <input
             type="file"
             accept=".pdf"
@@ -52,7 +52,7 @@ export function FileUpload({
             {formPdf ? (
               <div className="flex items-center justify-center gap-3 text-brand-dark">
                 <div className="w-12 h-12 bg-brand-dark rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-white" />
+                  <FileText className="w-6 h-6 text-white" strokeWidth={2} />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold">{formPdf.name}</p>
@@ -64,7 +64,7 @@ export function FileUpload({
             ) : (
               <div className="space-y-4">
                 <div className="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center mx-auto">
-                  <Upload className="w-8 h-8 text-brand-dark" />
+                  <Upload className="w-8 h-8 text-brand-dark" strokeWidth={2} />
                 </div>
                 <div>
                   <p className="text-text font-medium mb-1">
@@ -83,7 +83,7 @@ export function FileUpload({
         <label className="block text-sm font-semibold text-text mb-3">
           Supporting Documents (Optional)
         </label>
-        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200">
+        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 cursor-pointer">
           <input
             type="file"
             multiple
@@ -95,7 +95,7 @@ export function FileUpload({
           <label htmlFor="supporting-files-upload" className="cursor-pointer block">
             <div className="space-y-4">
               <div className="w-16 h-16 bg-mna-orange/20 rounded-2xl flex items-center justify-center mx-auto">
-                <Upload className="w-8 h-8 text-mna-orange" />
+                <Upload className="w-8 h-8 text-mna-orange" strokeWidth={2} />
               </div>
               <div>
                 <p className="text-text font-medium mb-1">
@@ -111,7 +111,7 @@ export function FileUpload({
         {supportingFiles.length > 0 && (
           <div className="mt-6 space-y-3">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-mna-orange" />
+              <AlertCircle className="w-4 h-4 text-mna-orange" strokeWidth={2} />
               <p className="text-sm font-semibold text-text">
                 Uploaded Files ({supportingFiles.length})
               </p>
@@ -124,7 +124,7 @@ export function FileUpload({
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-white" />
+                      <FileText className="w-4 h-4 text-white" strokeWidth={2} />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-text">{file.name}</p>
@@ -135,9 +135,9 @@ export function FileUpload({
                   </div>
                   <button
                     onClick={() => removeSupportingFile(index)}
-                    className="text-grey hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                    className="text-grey hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-4 h-4" strokeWidth={2} />
                   </button>
                 </div>
               ))}
