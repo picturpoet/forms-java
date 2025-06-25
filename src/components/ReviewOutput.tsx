@@ -1,4 +1,5 @@
-import { Download, FileText, AlertCircle, CheckCircle, Clock, Table } from 'lucide-react';
+import { Download, FileText, AlertCircle, CheckCircle, Clock, Table, Copy } from 'lucide-react';
+import { useState } from 'react';
 
 interface ReviewOutputProps {
   output: string;
@@ -6,6 +7,8 @@ interface ReviewOutputProps {
 }
 
 export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
   const downloadReport = () => {
     if (!output) return;
     
@@ -18,6 +21,16 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const copyToClipboard = async (text: string, sectionName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedSection(sectionName);
+      setTimeout(() => setCopiedSection(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   const processInlineMarkdown = (text: string): JSX.Element => {
@@ -55,7 +68,63 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         const level = (line.match(/^#+/) || [''])[0].length;
         const text = line.replace(/^#+\s*/, '');
         
-        if (level === 1) {
+        // Special handling for Document Deficiency List
+        if (text.toLowerCase().includes('document deficiency') || text.toLowerCase().includes('deficiency list')) {
+          // Find the content for this section
+          let sectionContent = '';
+          let sectionIndex = currentIndex + 1;
+          
+          // Collect all content until next major header or end
+          while (sectionIndex < lines.length) {
+            const nextLine = lines[sectionIndex].trim();
+            if (nextLine.startsWith('#') && (nextLine.match(/^#+/) || [''])[0].length <= level) {
+              break;
+            }
+            sectionContent += lines[sectionIndex] + '\n';
+            sectionIndex++;
+          }
+          
+          // Clean up the content for copying
+          const cleanContent = sectionContent
+            .split('\n')
+            .filter(line => line.trim())
+            .map(line => line.replace(/^[-•]\s*/, '• '))
+            .join('\n');
+          
+          elements.push(
+            <div key={currentIndex} className="mb-6">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold text-red-800 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5" />
+                    {text}
+                  </h3>
+                  <button
+                    onClick={() => copyToClipboard(cleanContent, 'deficiency-list')}
+                    className="inline-flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md transition-colors text-sm font-medium"
+                  >
+                    <Copy className="w-4 h-4" />
+                    {copiedSection === 'deficiency-list' ? 'Copied!' : 'Copy List'}
+                  </button>
+                </div>
+                
+                <div className="bg-white rounded-md p-4 border border-red-200">
+                  <div className="font-mono text-sm text-gray-800 whitespace-pre-wrap">
+                    {cleanContent || 'No deficiencies found.'}
+                  </div>
+                </div>
+                
+                <p className="text-xs text-red-600 mt-3">
+                  Copy this list to share with your client or compliance team
+                </p>
+              </div>
+            </div>
+          );
+          
+          currentIndex = sectionIndex - 1;
+        }
+        // Regular headers
+        else if (level === 1) {
           elements.push(
             <h1 key={currentIndex} className="text-3xl font-bold text-text mb-6 border-b-2 border-primary-200 pb-3">
               {processInlineMarkdown(text)}
