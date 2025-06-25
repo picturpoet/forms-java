@@ -20,11 +20,10 @@ export class MistralApiService {
       // Convert file to base64 for document processing
       const base64Data = await this.fileToBase64(file);
       
-      // Use Mistral OCR API as per official documentation
+      // Use Mistral OCR API with correct document structure
       const ocrResponse = await this.client.ocr.process({
         model: "mistral-ocr-latest",
         document: {
-          type: "document_base64",
           documentBase64: base64Data
         },
         includeImageBase64: true
