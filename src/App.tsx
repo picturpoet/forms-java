@@ -77,7 +77,7 @@ Please address the identified issues before final submission to the RBI portal.
             
             {/* Brand Name */}
             <h1 className="text-white text-2xl font-garamond font-medium">
-              Regality
+              Regality AI
             </h1>
           </div>
         </div>
