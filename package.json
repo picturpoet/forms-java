@@ -15,7 +15,9 @@
     "pdf-parse": "^1.1.1",
     "lucide-react": "^0.263.1",
     "pdfjs-dist": "^4.0.379",
-    "@mistralai/mistralai": "^1.2.0"
+    "@mistralai/mistralai": "^1.2.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

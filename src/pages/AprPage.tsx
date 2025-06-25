@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
 import { ReviewOutput } from '../components/ReviewOutput';
 import { MistralApiService } from '../services/mistralApi';
-import { FileText, Upload, ChevronUp, ChevronDown, ArrowLeft } from 'lucide-react';
+import { FileText, Upload, ChevronUp, ChevronDown, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Button } from '../components/ui/Button';
 
 export function AprPage() {
   const [formPdf, setFormPdf] = useState<File | null>(null);
@@ -107,19 +108,19 @@ The Mistral API key is not configured. Please contact the administrator to set u
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
+    <div className="min-h-screen bg-gradient-to-br from-brand-light/20 to-white">
       {/* Header Bar */}
-      <header className="bg-primary-600 shadow-lg">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-brand-dark shadow-xl border-b border-brand-dark/20">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               {/* Back to Home */}
               <a 
                 href="/"
-                className="text-white hover:text-primary-200 transition-colors p-2 rounded-lg hover:bg-primary-700"
+                className="text-white hover:text-brand-light transition-colors p-3 rounded-xl hover:bg-white/10 group"
                 title="Back to Home"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               </a>
 
               {/* Logo with fallback */}
@@ -127,26 +128,26 @@ The Mistral API key is not configured. Please contact the administrator to set u
                 <img 
                   src="/logo.png" 
                   alt="Regality AI Logo" 
-                  className="w-10 h-10 rounded-lg object-cover"
+                  className="w-10 h-10 rounded-xl object-cover shadow-card"
                   onError={() => setLogoError(true)}
                 />
               ) : (
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                  <div className="w-6 h-6 bg-primary-600 rounded"></div>
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-card">
+                  <div className="w-6 h-6 bg-brand-dark rounded"></div>
                 </div>
               )}
               
               {/* Brand Name */}
-              <h1 className="text-white text-2xl font-garamond font-medium">
+              <h1 className="text-white text-2xl font-garamond font-semibold">
                 Regality AI
               </h1>
             </div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-8">
               <a 
                 href="https://regality.ai" 
-                className="text-white hover:text-primary-200 transition-colors"
+                className="text-white/80 hover:text-white transition-colors font-medium"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -154,7 +155,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
               </a>
               <a 
                 href="https://regality.ai/contact/" 
-                className="text-white hover:text-primary-200 transition-colors"
+                className="text-white/80 hover:text-white transition-colors font-medium"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -165,44 +166,50 @@ The Mistral API key is not configured. Please contact the administrator to set u
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         {/* Main Title */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-primary-600" />
-            <h2 className="text-4xl font-bold text-text">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center shadow-card">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-5xl font-bold text-text">
               Form APR Reconciler
             </h2>
           </div>
-          <p className="text-lg text-text-light">
+          <p className="text-xl text-text-light font-light">
             AI-driven FEMA compliance review powered by Mistral OCR
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-12">
           {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-8">
             {/* Upload Section - Collapsible */}
-            <div className="bg-white rounded-xl shadow-lg border border-grey-200">
+            <div className="bg-white rounded-2xl shadow-card border border-grey/10">
               <div 
-                className="flex items-center justify-between p-6 cursor-pointer"
+                className="flex items-center justify-between p-8 cursor-pointer group"
                 onClick={() => setIsUploadSectionCollapsed(!isUploadSectionCollapsed)}
               >
-                <div className="flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-primary-600" />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-brand-dark" />
+                  </div>
                   <h3 className="text-xl font-semibold text-text">
                     Upload Documents
                   </h3>
                 </div>
-                {isUploadSectionCollapsed ? (
-                  <ChevronDown className="w-5 h-5 text-grey-400" />
-                ) : (
-                  <ChevronUp className="w-5 h-5 text-grey-400" />
-                )}
+                <div className="text-grey group-hover:text-text transition-colors">
+                  {isUploadSectionCollapsed ? (
+                    <ChevronDown className="w-5 h-5" />
+                  ) : (
+                    <ChevronUp className="w-5 h-5" />
+                  )}
+                </div>
               </div>
               
               {!isUploadSectionCollapsed && (
-                <div className="px-6 pb-6">
+                <div className="px-8 pb-8">
                   <FileUpload
                     formPdf={formPdf}
                     supportingFiles={supportingFiles}
@@ -214,28 +221,34 @@ The Mistral API key is not configured. Please contact the administrator to set u
             </div>
 
             {/* Analyze Button */}
-            <button
+            <Button
               onClick={handleAnalyze}
               disabled={!formPdf || isAnalyzing}
-              className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-grey-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
+              size="lg"
+              className="w-full"
             >
               {isAnalyzing ? (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-3">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   {analysisProgress || 'Analyzing Documents...'}
                 </div>
               ) : (
                 'Start Analysis'
               )}
-            </button>
+            </Button>
 
             {/* Progress Info */}
             {isAnalyzing && analysisProgress && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800 font-medium">
-                  {analysisProgress}
-                </p>
-                <p className="text-xs text-blue-600 mt-1">
+              <div className="bg-gradient-to-r from-brand-light to-brand-light/50 border border-brand-dark/20 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
+                    <AlertCircle className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-brand-dark font-semibold">
+                    {analysisProgress}
+                  </p>
+                </div>
+                <p className="text-text-light text-sm">
                   Using official Mistral OCR API (mistral-ocr-latest)
                 </p>
               </div>
@@ -244,8 +257,11 @@ The Mistral API key is not configured. Please contact the administrator to set u
 
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
-              <h3 className="text-2xl font-semibold text-text mb-6">
+            <div className="bg-white rounded-2xl shadow-card p-8 border border-grey/10">
+              <h3 className="text-2xl font-semibold text-text mb-8 flex items-center gap-3">
+                <div className="w-8 h-8 bg-mna-yellow rounded-lg flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-white" />
+                </div>
                 Review Results
               </h3>
               <ReviewOutput output={reviewOutput} isAnalyzing={isAnalyzing} />

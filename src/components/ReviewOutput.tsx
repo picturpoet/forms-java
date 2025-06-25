@@ -1,5 +1,6 @@
-import { Download, FileText, AlertCircle, CheckCircle, Clock, Table, Copy } from 'lucide-react';
+import { Download, FileText, AlertCircle, CheckCircle, Clock, Table, Copy, Brain } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from './ui/Button';
 
 interface ReviewOutputProps {
   output: string;
@@ -42,7 +43,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         {parts.map((part, index) => {
           if (part.startsWith('**') && part.endsWith('**')) {
             const boldText = part.slice(2, -2);
-            return <strong key={index} className="font-semibold">{boldText}</strong>;
+            return <strong key={index} className="font-semibold text-text">{boldText}</strong>;
           }
           return <span key={index}>{part}</span>;
         })}
@@ -92,29 +93,34 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
             .join('\n');
           
           elements.push(
-            <div key={currentIndex} className="mb-6">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-red-800 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" />
+            <div key={currentIndex} className="mb-8">
+              <div className="bg-gradient-to-r from-red-50 to-red-50/50 border border-red-200 rounded-2xl p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-semibold text-red-800 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
+                      <AlertCircle className="w-5 h-5 text-white" />
+                    </div>
                     {text}
                   </h3>
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => copyToClipboard(cleanContent, 'deficiency-list')}
-                    className="inline-flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md transition-colors text-sm font-medium"
+                    className="bg-red-100 hover:bg-red-200 text-red-700 border-red-300"
                   >
                     <Copy className="w-4 h-4" />
                     {copiedSection === 'deficiency-list' ? 'Copied!' : 'Copy List'}
-                  </button>
+                  </Button>
                 </div>
                 
-                <div className="bg-white rounded-md p-4 border border-red-200">
-                  <div className="font-mono text-sm text-gray-800 whitespace-pre-wrap">
+                <div className="bg-white rounded-xl p-6 border border-red-200 shadow-card">
+                  <div className="font-mono text-sm text-text leading-relaxed whitespace-pre-wrap">
                     {cleanContent || 'No deficiencies found.'}
                   </div>
                 </div>
                 
-                <p className="text-xs text-red-600 mt-3">
+                <p className="text-xs text-red-600 mt-4 flex items-center gap-2">
+                  <AlertCircle className="w-3 h-3" />
                   Copy this list to share with your client or compliance team
                 </p>
               </div>
@@ -126,25 +132,25 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         // Regular headers
         else if (level === 1) {
           elements.push(
-            <h1 key={currentIndex} className="text-3xl font-bold text-text mb-6 border-b-2 border-primary-200 pb-3">
+            <h1 key={currentIndex} className="text-4xl font-bold text-text mb-8 border-b-2 border-brand-dark/20 pb-4">
               {processInlineMarkdown(text)}
             </h1>
           );
         } else if (level === 2) {
           elements.push(
-            <h2 key={currentIndex} className="text-2xl font-semibold text-text mb-4 border-b border-grey-200 pb-2 mt-8">
+            <h2 key={currentIndex} className="text-3xl font-semibold text-text mb-6 border-b border-grey/20 pb-3 mt-12">
               {processInlineMarkdown(text)}
             </h2>
           );
         } else if (level === 3) {
           elements.push(
-            <h3 key={currentIndex} className="text-xl font-medium text-text mb-3 mt-6">
+            <h3 key={currentIndex} className="text-2xl font-medium text-text mb-4 mt-8">
               {processInlineMarkdown(text)}
             </h3>
           );
         } else {
           elements.push(
-            <h4 key={currentIndex} className="text-lg font-medium text-text mb-2 mt-4">
+            <h4 key={currentIndex} className="text-xl font-medium text-text mb-3 mt-6">
               {processInlineMarkdown(text)}
             </h4>
           );
@@ -154,7 +160,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
       else if (line.startsWith('**') && line.endsWith('**')) {
         const text = line.replace(/^\*\*|\*\*$/g, '');
         elements.push(
-          <p key={currentIndex} className="font-semibold text-text mb-2">
+          <p key={currentIndex} className="font-semibold text-text mb-3 text-lg">
             {text}
           </p>
         );
@@ -168,20 +174,24 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         elements.push(
           <div
             key={currentIndex}
-            className={`p-4 rounded-lg border-l-4 mb-4 ${
+            className={`p-6 rounded-2xl border-l-4 mb-6 shadow-card ${
               isSuccess
-                ? 'bg-green-50 border-accent-yellow'
+                ? 'bg-gradient-to-r from-green-50 to-green-50/50 border-mna-yellow'
                 : isWarning
-                ? 'bg-accent-yellow-light border-accent-orange'
+                ? 'bg-gradient-to-r from-yellow-50 to-yellow-50/50 border-mna-orange'
                 : isError
-                ? 'bg-red-50 border-red-400'
-                : 'bg-grey-50 border-grey-400'
+                ? 'bg-gradient-to-r from-red-50 to-red-50/50 border-red-400'
+                : 'bg-gradient-to-r from-brand-light to-brand-light/50 border-grey'
             }`}
           >
-            <div className="flex items-start gap-3">
-              {isSuccess && <CheckCircle className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />}
-              {(isWarning || isError) && <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isError ? 'text-red-600' : 'text-accent-orange'}`} />}
-              <div className="text-sm text-text leading-relaxed">
+            <div className="flex items-start gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                isSuccess ? 'bg-mna-yellow' : isError ? 'bg-red-500' : 'bg-mna-orange'
+              }`}>
+                {isSuccess && <CheckCircle className="w-5 h-5 text-white" />}
+                {(isWarning || isError) && <AlertCircle className="w-5 h-5 text-white" />}
+              </div>
+              <div className="text-text leading-relaxed flex-1">
                 {processInlineMarkdown(line)}
               </div>
             </div>
@@ -197,7 +207,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           const listLine = lines[listIndex].trim();
           const text = listLine.replace(/^[-•]\s*|\d+\.\s*/, '');
           listItems.push(
-            <li key={listIndex} className="mb-1">
+            <li key={listIndex} className="mb-2">
               {processInlineMarkdown(text)}
             </li>
           );
@@ -209,7 +219,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         const listClass = isOrdered ? 'list-decimal list-inside' : 'list-disc list-inside';
         
         elements.push(
-          <ListTag key={currentIndex} className={`${listClass} text-sm text-text-light mb-4 space-y-1 bg-grey-50 p-4 rounded-lg border border-grey-200`}>
+          <ListTag key={currentIndex} className={`${listClass} text-text-light mb-6 space-y-2 bg-brand-light/30 p-6 rounded-2xl border border-brand-dark/10`}>
             {listItems}
           </ListTag>
         );
@@ -233,16 +243,18 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           );
           
           elements.push(
-            <div key={currentIndex} className="mb-6 overflow-x-auto">
-              <div className="flex items-center gap-2 mb-3">
-                <Table className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium text-text">Review Table</span>
+            <div key={currentIndex} className="mb-8 overflow-x-auto">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
+                  <Table className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-lg font-semibold text-text">Review Table</span>
               </div>
-              <table className="w-full border border-grey-300 rounded-lg overflow-hidden">
-                <thead className="bg-primary-50">
+              <table className="w-full border border-grey/20 rounded-2xl overflow-hidden shadow-card">
+                <thead className="bg-brand-light">
                   <tr>
                     {headers.map((header, idx) => (
-                      <th key={idx} className="px-4 py-3 text-left text-sm font-semibold text-text border-b border-grey-300">
+                      <th key={idx} className="px-6 py-4 text-left font-semibold text-text border-b border-grey/20">
                         {processInlineMarkdown(header)}
                       </th>
                     ))}
@@ -250,9 +262,9 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                 </thead>
                 <tbody>
                   {rows.map((row, rowIdx) => (
-                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-grey-50'}>
+                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-brand-light/20'}>
                       {row.map((cell, cellIdx) => (
-                        <td key={cellIdx} className="px-4 py-3 text-sm text-text border-b border-grey-200">
+                        <td key={cellIdx} className="px-6 py-4 text-text-light border-b border-grey/10">
                           {processInlineMarkdown(cell)}
                         </td>
                       ))}
@@ -269,7 +281,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
       // Regular paragraphs (with inline markdown processing)
       else {
         elements.push(
-          <p key={currentIndex} className="text-sm text-text-light leading-relaxed mb-3">
+          <p key={currentIndex} className="text-text-light leading-relaxed mb-4">
             {processInlineMarkdown(line)}
           </p>
         );
@@ -283,17 +295,17 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
 
   if (isAnalyzing) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-        <h3 className="text-lg font-semibold text-text mb-2">
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="w-20 h-20 border-4 border-brand-light border-t-brand-dark rounded-full animate-spin mb-6"></div>
+        <h3 className="text-2xl font-semibold text-text mb-4">
           AI Analysis in Progress
         </h3>
-        <p className="text-text-light max-w-md mb-4">
+        <p className="text-text-light max-w-md mb-6 leading-relaxed">
           Our Mistral AI is processing your documents with OCR technology for comprehensive FEMA compliance review...
         </p>
-        <div className="flex items-center gap-2 text-sm text-primary-600">
-          <Clock className="w-4 h-4" />
-          <span>This may take 1-3 minutes depending on document complexity</span>
+        <div className="flex items-center gap-3 text-brand-dark bg-brand-light rounded-xl px-6 py-3">
+          <Clock className="w-5 h-5" />
+          <span className="font-medium">This may take 1-3 minutes depending on document complexity</span>
         </div>
       </div>
     );
@@ -301,12 +313,14 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
 
   if (!output) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <FileText className="w-16 h-16 text-grey-300 mb-4" />
-        <h3 className="text-lg font-semibold text-text mb-2">
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="w-20 h-20 bg-brand-light rounded-2xl flex items-center justify-center mb-6">
+          <FileText className="w-10 h-10 text-brand-dark" />
+        </div>
+        <h3 className="text-2xl font-semibold text-text mb-4">
           Ready for Analysis
         </h3>
-        <p className="text-text-light max-w-md">
+        <p className="text-text-light max-w-md leading-relaxed">
           Upload your Form APR and click "Start Analysis" to begin the AI-powered compliance review using Mistral OCR technology.
         </p>
       </div>
@@ -314,30 +328,33 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Download Button */}
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={downloadReport}
-          className="inline-flex items-center gap-2 bg-accent-yellow hover:bg-accent-orange text-text px-4 py-2 rounded-lg transition-colors font-medium shadow-sm hover:shadow-md"
+          variant="secondary"
+          className="bg-mna-yellow hover:bg-mna-orange text-white shadow-card"
         >
           <Download className="w-4 h-4" />
           Download Report
-        </button>
+        </Button>
       </div>
 
       {/* Review Content with Proper Markdown Rendering */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {renderMarkdownContent(output)}
       </div>
 
       {/* Analysis Info Footer */}
-      <div className="mt-8 p-4 bg-primary-50 rounded-lg border border-primary-200">
-        <div className="flex items-center gap-2 text-sm text-primary-700">
-          <CheckCircle className="w-4 h-4" />
-          <span className="font-medium">Analysis completed using Mistral AI with OCR technology</span>
+      <div className="mt-12 p-8 bg-gradient-to-r from-brand-light to-brand-light/50 rounded-2xl border border-brand-dark/20 shadow-card">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-10 h-10 bg-brand-dark rounded-xl flex items-center justify-center">
+            <Brain className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-lg font-semibold text-brand-dark">Analysis completed using Mistral AI with OCR technology</span>
         </div>
-        <p className="text-xs text-primary-600 mt-1">
+        <p className="text-text-light">
           This report was generated by AI and should be reviewed by a qualified professional before submission.
         </p>
       </div>
