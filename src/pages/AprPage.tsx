@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
 import { ReviewOutput } from '../components/ReviewOutput';
-import { ApiKeySetup } from '../components/ApiKeySetup';
 import { MistralApiService } from '../services/mistralApi';
 import { FileText, Upload, ChevronUp, ChevronDown, ArrowLeft } from 'lucide-react';
 
 export function AprPage() {
-  const [apiKey, setApiKey] = useState<string>('');
   const [formPdf, setFormPdf] = useState<File | null>(null);
   const [supportingFiles, setSupportingFiles] = useState<File[]>([]);
   const [reviewOutput, setReviewOutput] = useState<string>('');
@@ -16,7 +14,23 @@ export function AprPage() {
   const [logoError, setLogoError] = useState(false);
 
   const handleAnalyze = async () => {
-    if (!formPdf || !apiKey) return;
+    if (!formPdf) return;
+
+    // Get API key from environment variables
+    const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+    
+    if (!apiKey) {
+      setReviewOutput(`# Configuration Error
+
+**Missing API Key**
+
+The Mistral API key is not configured. Please contact the administrator to set up the VITE_MISTRAL_API_KEY environment variable.
+
+**For Administrators:**
+- Add VITE_MISTRAL_API_KEY to your Netlify environment variables
+- Redeploy the application after adding the key`);
+      return;
+    }
 
     setIsAnalyzing(true);
     setReviewOutput('');
@@ -61,18 +75,18 @@ export function AprPage() {
       
       if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
         errorReport += `**Possible causes:**
-- Invalid API key
+- Invalid API key configuration
 - API key doesn't have access to Mistral OCR
 - API key has expired
 
 **Solutions:**
-- Verify your API key is correct
-- Check if your Mistral account has OCR access enabled
-- Try generating a new API key from the Mistral console`;
+- Contact administrator to verify API key configuration
+- Check if the Mistral account has OCR access enabled
+- Administrator may need to generate a new API key`;
       } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
         errorReport += `**Rate limit exceeded**
 - Please wait a few minutes before trying again
-- Consider upgrading your Mistral plan for higher limits`;
+- Contact administrator if this persists`;
       } else if (errorMessage.includes('413') || errorMessage.includes('too large')) {
         errorReport += `**Document too large**
 - Try reducing the PDF file size
@@ -81,7 +95,8 @@ export function AprPage() {
         errorReport += `**General troubleshooting:**
 - Check your internet connection
 - Ensure the PDF file is not corrupted
-- Try with a smaller document first`;
+- Try with a smaller document first
+- Contact support if the issue persists`;
       }
       
       setReviewOutput(errorReport);
@@ -90,10 +105,6 @@ export function AprPage() {
       setIsAnalyzing(false);
     }
   };
-
-  if (!apiKey) {
-    return <ApiKeySetup onApiKeySet={setApiKey} />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
