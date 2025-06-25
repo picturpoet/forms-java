@@ -26,6 +26,25 @@ export default {
         'mna-yellow': '#F2BA46',  // Positive highlights, success states
         'mna-orange': '#F2AA5C',  // Warnings, secondary CTAs
         
+        // Legacy color classes for compatibility
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+        },
+        accent: {
+          yellow: '#F2BA46',
+          'yellow-light': '#fef3c7',
+          orange: '#F2AA5C',
+        },
+        
         // Dark mode background layers
         'bg-layer': '#321B4A',    // Dark mode background layer
       },
