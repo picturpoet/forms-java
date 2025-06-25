@@ -20,6 +20,23 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
     URL.revokeObjectURL(url);
   };
 
+  const processInlineMarkdown = (text: string): JSX.Element => {
+    // Handle bold text (**text**)
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            const boldText = part.slice(2, -2);
+            return <strong key={index} className="font-semibold">{boldText}</strong>;
+          }
+          return <span key={index}>{part}</span>;
+        })}
+      </>
+    );
+  };
+
   const renderMarkdownContent = (content: string) => {
     const lines = content.split('\n');
     const elements: JSX.Element[] = [];
@@ -41,30 +58,30 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         if (level === 1) {
           elements.push(
             <h1 key={currentIndex} className="text-3xl font-bold text-text mb-6 border-b-2 border-primary-200 pb-3">
-              {text}
+              {processInlineMarkdown(text)}
             </h1>
           );
         } else if (level === 2) {
           elements.push(
             <h2 key={currentIndex} className="text-2xl font-semibold text-text mb-4 border-b border-grey-200 pb-2 mt-8">
-              {text}
+              {processInlineMarkdown(text)}
             </h2>
           );
         } else if (level === 3) {
           elements.push(
             <h3 key={currentIndex} className="text-xl font-medium text-text mb-3 mt-6">
-              {text}
+              {processInlineMarkdown(text)}
             </h3>
           );
         } else {
           elements.push(
             <h4 key={currentIndex} className="text-lg font-medium text-text mb-2 mt-4">
-              {text}
+              {processInlineMarkdown(text)}
             </h4>
           );
         }
       }
-      // Bold text
+      // Bold text (standalone lines)
       else if (line.startsWith('**') && line.endsWith('**')) {
         const text = line.replace(/^\*\*|\*\*$/g, '');
         elements.push(
@@ -96,7 +113,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
               {isSuccess && <CheckCircle className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />}
               {(isWarning || isError) && <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isError ? 'text-red-600' : 'text-accent-orange'}`} />}
               <div className="text-sm text-text leading-relaxed">
-                {line}
+                {processInlineMarkdown(line)}
               </div>
             </div>
           </div>
@@ -112,7 +129,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           const text = listLine.replace(/^[-•]\s*|\d+\.\s*/, '');
           listItems.push(
             <li key={listIndex} className="mb-1">
-              {text}
+              {processInlineMarkdown(text)}
             </li>
           );
           listIndex++;
@@ -157,7 +174,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                   <tr>
                     {headers.map((header, idx) => (
                       <th key={idx} className="px-4 py-3 text-left text-sm font-semibold text-text border-b border-grey-300">
-                        {header}
+                        {processInlineMarkdown(header)}
                       </th>
                     ))}
                   </tr>
@@ -167,7 +184,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                     <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-grey-50'}>
                       {row.map((cell, cellIdx) => (
                         <td key={cellIdx} className="px-4 py-3 text-sm text-text border-b border-grey-200">
-                          {cell}
+                          {processInlineMarkdown(cell)}
                         </td>
                       ))}
                     </tr>
@@ -180,11 +197,11 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           currentIndex = tableIndex - 1;
         }
       }
-      // Regular paragraphs
+      // Regular paragraphs (with inline markdown processing)
       else {
         elements.push(
           <p key={currentIndex} className="text-sm text-text-light leading-relaxed mb-3">
-            {line}
+            {processInlineMarkdown(line)}
           </p>
         );
       }
