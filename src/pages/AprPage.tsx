@@ -111,7 +111,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
     <div className="min-h-screen bg-white">
       {/* Header Bar - Solid background for maximum contrast */}
       <header className="bg-brand-dark shadow-xl">
-        <div className="container mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               {/* Back to Home */}
@@ -166,12 +166,12 @@ The Mistral API key is not configured. Please contact the administrator to set u
         </div>
       </header>
 
-      {/* Main content with light background for better text contrast */}
+      {/* Main content with consistent container */}
       <div className="bg-gradient-to-b from-brand-light/10 to-white">
-        <div className="container mx-auto px-4 py-12">
-          {/* Main Title - High contrast on light background */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-4 mb-6">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+          {/* Main Title - Consistent spacing */}
+          <div className="text-center mb-16">
+            <div className="flex items-center justify-center gap-4 mb-8">
               <div className="w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center shadow-card">
                 <FileText className="w-8 h-8 text-white" />
               </div>
@@ -187,9 +187,10 @@ The Mistral API key is not configured. Please contact the administrator to set u
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-12">
-            {/* Left Sidebar */}
-            <div className="lg:col-span-1 space-y-8">
+          {/* 12-column grid layout */}
+          <div className="grid lg:grid-cols-12 gap-12">
+            {/* Left Sidebar - 4 columns */}
+            <div className="lg:col-span-4 space-y-8">
               {/* Upload Section - Collapsible */}
               <div className="bg-white rounded-2xl shadow-card border border-grey/10">
                 <div 
@@ -260,8 +261,8 @@ The Mistral API key is not configured. Please contact the administrator to set u
               )}
             </div>
 
-            {/* Main Content */}
-            <div className="lg:col-span-2">
+            {/* Main Content - 8 columns */}
+            <div className="lg:col-span-8">
               <div className="bg-white rounded-2xl shadow-card p-8 border border-grey/10">
                 <h3 className="text-2xl font-semibold text-text mb-8 flex items-center gap-3">
                   <div className="w-8 h-8 bg-mna-yellow rounded-lg flex items-center justify-center">
