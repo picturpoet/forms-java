@@ -55,8 +55,8 @@ export function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section - Fixed 12-col grid with proper spacing */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-32">
+      {/* Hero Section - Reduced from py-32 to py-16 */}
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-12 gap-16 items-center">
           {/* Left Content - 6 columns */}
           <div className="lg:col-span-6 space-y-12 animate-fade-in">
