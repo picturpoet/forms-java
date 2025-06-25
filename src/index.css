@@ -25,7 +25,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%2344087D' stroke='%2344087D' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 12 12, auto;
+  cursor: url('/cursor.png') 12 12, auto;
 }
 
 #root {
@@ -36,22 +36,22 @@ body {
 
 /* Paper plane cursor for interactive elements */
 button, a, [role="button"], input[type="file"] + label, .cursor-pointer {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%23F2BA46' stroke='%2344087D' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 14 14, pointer;
+  cursor: url('/cursor.png') 12 12, pointer;
 }
 
-/* Hover state for interactive elements */
+/* Hover state for interactive elements - slightly larger */
 button:hover, a:hover, [role="button"]:hover, input[type="file"] + label:hover {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%23F2AA5C' stroke='%2344087D' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 16 16, pointer;
+  cursor: url('/cursor.png') 14 14, pointer;
 }
 
-/* Text selection cursor */
+/* Text selection cursor - use I-beam for text inputs */
 input[type="text"], input[type="email"], textarea, [contenteditable] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 2v20M8 6h8M8 18h8' stroke='%2344087D' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 10 10, text;
+  cursor: text;
 }
 
-/* Disabled elements */
+/* Disabled elements - use default disabled cursor */
 button:disabled, a[aria-disabled="true"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%23727D85' stroke='%23727D85' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 12 12, not-allowed;
+  cursor: not-allowed;
 }
 
 /* Custom slider styles */
@@ -61,7 +61,7 @@ button:disabled, a[aria-disabled="true"] {
   width: 20px;
   border-radius: 50%;
   background: #4f46e5;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%23F2BA46' stroke='%2344087D' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 14 14, pointer;
+  cursor: url('/cursor.png') 12 12, pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -70,17 +70,36 @@ button:disabled, a[aria-disabled="true"] {
   width: 20px;
   border-radius: 50%;
   background: #4f46e5;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3 3l18 9-18 9 4-9-4-9z' fill='%23F2BA46' stroke='%2344087D' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 14 14, pointer;
+  cursor: url('/cursor.png') 12 12, pointer;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Loading states */
+/* Loading states - use wait cursor */
 .loading {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%2344087D' stroke-width='2' fill='none' stroke-dasharray='31.416' stroke-dashoffset='31.416'%3E%3CanimateTransform attributeName='transform' type='rotate' values='0 12 12;360 12 12' dur='1s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E") 12 12, wait;
+  cursor: wait;
 }
 
 /* Resize cursors for specific elements */
 .resize-handle {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M8 8l8 8M16 8l-8 8' stroke='%2344087D' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, nw-resize;
+  cursor: nw-resize;
+}
+
+/* File upload areas - enhanced cursor feedback */
+.file-upload-area {
+  cursor: url('/cursor.png') 12 12, pointer;
+}
+
+.file-upload-area:hover {
+  cursor: url('/cursor.png') 14 14, pointer;
+}
+
+/* Drag and drop states */
+.drag-over {
+  cursor: url('/cursor.png') 12 12, copy;
+}
+
+/* Focus states for accessibility */
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  cursor: url('/cursor.png') 12 12, pointer;
 }

@@ -40,7 +40,7 @@ export function FileUpload({
         <label className="block text-sm font-semibold text-text mb-3">
           Form APR (Required)
         </label>
-        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 bg-gradient-to-br from-brand-light/20 to-transparent cursor-pointer">
+        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 bg-gradient-to-br from-brand-light/20 to-transparent file-upload-area">
           <input
             type="file"
             accept=".pdf"
@@ -83,7 +83,7 @@ export function FileUpload({
         <label className="block text-sm font-semibold text-text mb-3">
           Supporting Documents (Optional)
         </label>
-        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 cursor-pointer">
+        <div className="border-2 border-dashed border-grey/30 rounded-2xl p-8 text-center hover:border-brand-dark/50 transition-all duration-200 file-upload-area">
           <input
             type="file"
             multiple
