@@ -3,7 +3,6 @@ import { FileUpload } from './components/FileUpload';
 import { ReviewOutput } from './components/ReviewOutput';
 import { ApiKeySetup } from './components/ApiKeySetup';
 import { MistralApiService } from './services/mistralApi';
-import { PdfProcessor } from './services/pdfProcessor';
 import { FileText, Upload } from 'lucide-react';
 
 function App() {
@@ -22,55 +21,30 @@ function App() {
     
     try {
       const mistralService = new MistralApiService(apiKey);
-      const pdfProcessor = new PdfProcessor();
 
-      // Step 1: Process the main Form APR
-      setAnalysisProgress('Processing Form APR document...');
-      const mainPdfContent = await pdfProcessor.processPdf(formPdf);
+      // Step 1: Process the main Form APR with Mistral OCR
+      setAnalysisProgress('Processing Form APR with Mistral OCR...');
+      const mainDocument = await mistralService.processDocumentWithOCR(formPdf);
       
-      console.log('Main PDF processed:', {
-        textLength: mainPdfContent.textContent.length,
-        imageCount: mainPdfContent.images.length,
-        pageCount: mainPdfContent.pageCount
+      console.log('Main document processed:', {
+        ocrContentLength: mainDocument.ocrContent.length,
+        textContentLength: mainDocument.textContent.length,
+        pageCount: mainDocument.pageCount
       });
 
-      // Step 2: Process supporting documents
+      // Step 2: Process supporting documents if any
       let supportingContent = '';
       if (supportingFiles.length > 0) {
         setAnalysisProgress('Processing supporting documents...');
-        supportingContent = await pdfProcessor.processMultipleFiles(supportingFiles);
+        supportingContent = await mistralService.processSupportingDocuments(supportingFiles);
+        console.log('Supporting documents processed, content length:', supportingContent.length);
       }
 
-      // Step 3: Perform OCR on images if needed
-      let ocrContent = '';
-      if (mainPdfContent.images.length > 0) {
-        setAnalysisProgress('Performing OCR on document images...');
-        try {
-          ocrContent = await mistralService.performOCR(mainPdfContent.images);
-          console.log('OCR completed, content length:', ocrContent.length);
-        } catch (ocrError) {
-          console.warn('OCR failed, continuing with text-only analysis:', ocrError);
-        }
-      }
-
-      // Step 4: Combine all content
-      const fullContent = `
-MAIN FORM APR DOCUMENT:
-${mainPdfContent.textContent}
-
-${ocrContent ? `\nOCR EXTRACTED CONTENT:\n${ocrContent}` : ''}
-
-${supportingContent ? `\nSUPPORTING DOCUMENTS:\n${supportingContent}` : ''}
-      `.trim();
-
-      console.log('Full content prepared for analysis, length:', fullContent.length);
-
-      // Step 5: Analyze with Mistral
+      // Step 3: Perform FEMA compliance analysis
       setAnalysisProgress('Analyzing document for FEMA compliance...');
-      const analysis = await mistralService.analyzeDocument(
-        fullContent,
-        [], // Images already processed via OCR
-        'mistral-large-latest'
+      const analysis = await mistralService.analyzeDocumentForCompliance(
+        mainDocument,
+        supportingContent
       );
 
       setReviewOutput(analysis);
@@ -79,7 +53,35 @@ ${supportingContent ? `\nSUPPORTING DOCUMENTS:\n${supportingContent}` : ''}
     } catch (error) {
       console.error('Analysis failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setReviewOutput(`# Analysis Failed\n\n**Error:** ${errorMessage}\n\nPlease check your API key and try again. If the problem persists, the document might be too large or corrupted.`);
+      
+      let errorReport = `# Analysis Failed\n\n**Error:** ${errorMessage}\n\n`;
+      
+      if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
+        errorReport += `**Possible causes:**
+- Invalid API key
+- API key doesn't have access to Mistral OCR
+- API key has expired
+
+**Solutions:**
+- Verify your API key is correct
+- Check if your Mistral account has OCR access enabled
+- Try generating a new API key from the Mistral console`;
+      } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+        errorReport += `**Rate limit exceeded**
+- Please wait a few minutes before trying again
+- Consider upgrading your Mistral plan for higher limits`;
+      } else if (errorMessage.includes('413') || errorMessage.includes('too large')) {
+        errorReport += `**Document too large**
+- Try reducing the PDF file size
+- Split large documents into smaller parts`;
+      } else {
+        errorReport += `**General troubleshooting:**
+- Check your internet connection
+- Ensure the PDF file is not corrupted
+- Try with a smaller document first`;
+      }
+      
+      setReviewOutput(errorReport);
       setAnalysisProgress('');
     } finally {
       setIsAnalyzing(false);
@@ -164,8 +166,24 @@ ${supportingContent ? `\nSUPPORTING DOCUMENTS:\n${supportingContent}` : ''}
                 <p className="text-sm text-blue-800 font-medium">
                   {analysisProgress}
                 </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Using official Mistral OCR API (mistral-ocr-latest)
+                </p>
               </div>
             )}
+
+            {/* API Info */}
+            <div className="bg-accent-yellow-light border border-accent-yellow rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-text mb-2">
+                🔧 Technical Details
+              </h4>
+              <ul className="text-xs text-text-light space-y-1">
+                <li>• OCR Model: mistral-ocr-latest</li>
+                <li>• Analysis Model: mistral-large-latest</li>
+                <li>• Official Mistral SDK: @mistralai/mistralai</li>
+                <li>• FEMA compliance focused</li>
+              </ul>
+            </div>
           </div>
 
           {/* Main Content */}

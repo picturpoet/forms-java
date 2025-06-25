@@ -13,7 +13,8 @@
     "react-dom": "^18.3.1",
     "pdf-parse": "^1.1.1",
     "lucide-react": "^0.263.1",
-    "pdfjs-dist": "^4.0.379"
+    "pdfjs-dist": "^4.0.379",
+    "@mistralai/mistralai": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
