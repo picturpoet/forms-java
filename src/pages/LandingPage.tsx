@@ -1,4 +1,4 @@
-import { ArrowRight, FileText, Zap, Clock, Brain, ExternalLink, CheckCircle, Monitor, Smartphone } from 'lucide-react';
+import { ArrowRight, FileText, Zap, Clock, Brain, ExternalLink, CheckCircle, Monitor, Smartphone, ZapIcon, ClockIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../components/ui/Button';
 import { CardTile } from '../components/ui/CardTile';
@@ -36,7 +36,7 @@ export function LandingPage() {
             <nav className="hidden md:flex items-center gap-8">
               <a 
                 href="https://regality.ai" 
-                className="text-text-light hover:text-text transition-colors font-medium"
+                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -44,7 +44,7 @@ export function LandingPage() {
               </a>
               <a 
                 href="https://regality.ai/contact/" 
-                className="text-text-light hover:text-text transition-colors font-medium"
+                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -78,9 +78,9 @@ export function LandingPage() {
               className="group"
               onClick={() => window.location.href = '/apr'}
             >
-              <Zap className="w-5 h-5" />
+              <ZapIcon className="w-5 h-5 transition-all duration-200 group-hover:fill-current" strokeWidth={2} />
               Try Forms
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" strokeWidth={2} />
             </Button>
             
             <Button
@@ -90,7 +90,7 @@ export function LandingPage() {
               onClick={() => window.open('https://regality.ai/contact/', '_blank')}
             >
               Contact Sales
-              <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" strokeWidth={2} />
             </Button>
           </div>
         </div>
@@ -123,20 +123,20 @@ export function LandingPage() {
                   {/* Before - Manual Process */}
                   <div className="text-center space-y-3">
                     <h4 className="text-base md:text-lg font-semibold text-text flex items-center justify-center gap-2">
-                      <Clock className="w-4 h-4 md:w-5 md:h-5 text-mna-orange" />
+                      <ClockIcon className="w-4 h-4 md:w-5 md:h-5 text-mna-orange transition-all duration-200 hover:fill-current" strokeWidth={2} />
                       Before: Manual Process
                     </h4>
                     <div className="grid grid-cols-3 gap-2 md:gap-3">
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center">
-                        <FileText className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <FileText className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" strokeWidth={2} />
                         <p className="text-xs text-red-700 font-medium">Hours of Reading</p>
                       </div>
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center">
-                        <Monitor className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <Monitor className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" strokeWidth={2} />
                         <p className="text-xs text-red-700 font-medium">Manual Cross-Check</p>
                       </div>
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center">
-                        <Brain className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <Brain className="w-6 h-6 md:w-8 md:h-8 text-red-600 mx-auto mb-1 md:mb-2" strokeWidth={2} />
                         <p className="text-xs text-red-700 font-medium">Human Error Risk</p>
                       </div>
                     </div>
@@ -144,28 +144,28 @@ export function LandingPage() {
 
                   {/* Arrow */}
                   <div className="flex justify-center">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-brand-dark rounded-full flex items-center justify-center">
-                      <ArrowRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-brand-dark rounded-full flex items-center justify-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                      <ArrowRight className="w-5 h-5 md:w-6 md:h-6 text-white" strokeWidth={2} />
                     </div>
                   </div>
 
                   {/* After - AI Process */}
                   <div className="text-center space-y-3">
                     <h4 className="text-base md:text-lg font-semibold text-text flex items-center justify-center gap-2">
-                      <Zap className="w-4 h-4 md:w-5 md:h-5 text-mna-yellow" />
+                      <ZapIcon className="w-4 h-4 md:w-5 md:h-5 text-mna-yellow transition-all duration-200 hover:fill-current" strokeWidth={2} />
                       After: AI Automation
                     </h4>
                     <div className="grid grid-cols-3 gap-2 md:gap-3">
-                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center">
-                        <Brain className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <Brain className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2" strokeWidth={2} />
                         <p className="text-xs text-green-700 font-medium">AI OCR Analysis</p>
                       </div>
-                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center">
-                        <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2" strokeWidth={2} />
                         <p className="text-xs text-green-700 font-medium">Auto Compliance</p>
                       </div>
-                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center">
-                        <Clock className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2" />
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 md:p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
+                        <ClockIcon className="w-6 h-6 md:w-8 md:h-8 text-green-600 mx-auto mb-1 md:mb-2 transition-all duration-200 hover:fill-current" strokeWidth={2} />
                         <p className="text-xs text-green-700 font-medium">Minutes Not Hours</p>
                       </div>
                     </div>
@@ -189,10 +189,10 @@ export function LandingPage() {
           {/* Two Cards - Problem/Solution with reduced spacing */}
           <div className="grid lg:grid-cols-2 gap-8 mb-16">
             {/* Problem Card */}
-            <div className="bg-gradient-to-r from-mna-orange/10 to-mna-orange/5 rounded-2xl p-8 border border-mna-orange/20 shadow-card">
+            <div className="bg-gradient-to-r from-mna-orange/10 to-mna-orange/5 rounded-2xl p-8 border border-mna-orange/20 shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[2px]">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 md:w-14 md:h-14 bg-mna-orange rounded-2xl flex items-center justify-center flex-shrink-0 shadow-card">
-                  <Clock className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                  <ClockIcon className="w-6 h-6 md:w-7 md:h-7 text-white transition-all duration-200 hover:fill-current" strokeWidth={2} />
                 </div>
                 <div className="space-y-3">
                   <h3 className="text-xl md:text-2xl font-semibold text-text">
@@ -207,10 +207,10 @@ export function LandingPage() {
             </div>
 
             {/* Solution Card */}
-            <div className="bg-gradient-to-r from-brand-light to-brand-light/50 rounded-2xl p-8 border border-brand-dark/20 shadow-card">
+            <div className="bg-gradient-to-r from-brand-light to-brand-light/50 rounded-2xl p-8 border border-brand-dark/20 shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[2px]">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 md:w-14 md:h-14 bg-brand-dark rounded-2xl flex items-center justify-center flex-shrink-0 shadow-card">
-                  <Brain className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                  <Brain className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2} />
                 </div>
                 <div className="space-y-3">
                   <h3 className="text-xl md:text-2xl font-semibold text-text">
@@ -237,7 +237,7 @@ export function LandingPage() {
 
           <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8">
             <CardTile
-              icon={Zap}
+              icon={ZapIcon}
               title="Lightning Fast"
               description="What takes hours manually, our AI completes in minutes with higher accuracy and comprehensive analysis."
             />
@@ -255,11 +255,25 @@ export function LandingPage() {
             />
           </div>
 
-          {/* Trust indicators - Reduced spacing */}
+          {/* Trust indicators - Replace with partner logos */}
           <div className="mt-16 text-center">
-            <div className="inline-flex items-center gap-3 bg-white rounded-2xl px-8 py-4 shadow-card border border-grey/10">
-              <CheckCircle className="w-6 h-6 text-mna-yellow" />
-              <span className="text-text font-medium">Trusted by compliance professionals</span>
+            <div className="space-y-4">
+              <p className="text-text-light text-sm font-medium">Trusted by leading compliance professionals</p>
+              <div className="flex flex-wrap items-center justify-center gap-8 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                {/* Partner Logo Placeholders - Replace with actual logos */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-card border border-grey/10 hover:border-brand-dark/20 transition-all duration-200 transform hover:-translate-y-[1px] group">
+                  <div className="w-6 h-6 bg-brand-dark rounded group-hover:bg-mna-yellow transition-colors duration-200"></div>
+                  <span className="text-text-light font-medium group-hover:text-text transition-colors duration-200">RegTech Partners</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-card border border-grey/10 hover:border-brand-dark/20 transition-all duration-200 transform hover:-translate-y-[1px] group">
+                  <div className="w-6 h-6 bg-brand-dark rounded group-hover:bg-mna-orange transition-colors duration-200"></div>
+                  <span className="text-text-light font-medium group-hover:text-text transition-colors duration-200">Compliance Experts</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-card border border-grey/10 hover:border-brand-dark/20 transition-all duration-200 transform hover:-translate-y-[1px] group">
+                  <div className="w-6 h-6 bg-brand-dark rounded group-hover:bg-mna-yellow transition-colors duration-200"></div>
+                  <span className="text-text-light font-medium group-hover:text-text transition-colors duration-200">Financial Advisors</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -291,7 +305,7 @@ export function LandingPage() {
             <div className="flex items-center gap-8">
               <a 
                 href="https://regality.ai" 
-                className="text-text-light hover:text-text transition-colors font-medium"
+                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -299,7 +313,7 @@ export function LandingPage() {
               </a>
               <a 
                 href="https://regality.ai/contact/" 
-                className="text-text-light hover:text-text transition-colors font-medium"
+                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
