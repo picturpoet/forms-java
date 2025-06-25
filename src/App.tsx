@@ -66,17 +66,34 @@ Please address the identified issues before final submission to the RBI portal.
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
+      {/* Header Bar */}
+      <header className="bg-primary-600 shadow-lg">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            {/* Logo Placeholder */}
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <div className="w-6 h-6 bg-primary-600 rounded"></div>
+            </div>
+            
+            {/* Brand Name */}
+            <h1 className="text-white text-2xl font-garamond font-medium">
+              Regality
+            </h1>
+          </div>
+        </div>
+      </header>
+
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Main Title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <FileText className="w-8 h-8 text-primary-600" />
-            <h1 className="text-4xl font-bold text-text">
+            <h2 className="text-4xl font-bold text-text">
               Form APR Reconciler
-            </h1>
+            </h2>
           </div>
           <p className="text-lg text-text-light">
-            powered by Regality - AI-driven FEMA compliance review
+            AI-driven FEMA compliance review
           </p>
         </div>
 
@@ -87,9 +104,9 @@ Please address the identified issues before final submission to the RBI portal.
             <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
               <div className="flex items-center gap-2 mb-4">
                 <Upload className="w-5 h-5 text-primary-600" />
-                <h2 className="text-xl font-semibold text-text">
+                <h3 className="text-xl font-semibold text-text">
                   Upload Documents
-                </h2>
+                </h3>
               </div>
               <FileUpload
                 formPdf={formPdf}
@@ -119,9 +136,9 @@ Please address the identified issues before final submission to the RBI portal.
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
-              <h2 className="text-2xl font-semibold text-text mb-6">
+              <h3 className="text-2xl font-semibold text-text mb-6">
                 Review Results
-              </h2>
+              </h3>
               <ReviewOutput output={reviewOutput} isAnalyzing={isAnalyzing} />
             </div>
           </div>

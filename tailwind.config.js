@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        garamond: ['EB Garamond', 'Garamond', 'serif'],
       },
       colors: {
         // Custom color palette
