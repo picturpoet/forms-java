@@ -6,6 +6,19 @@ export interface ProcessedDocument {
   pageCount: number;
 }
 
+interface OCRResult {
+  text?: string;
+  pages?: Array<{
+    page_number?: number;
+    content?: string;
+  }>;
+}
+
+interface OCRResponse {
+  result?: OCRResult;
+  [key: string]: any;
+}
+
 export class MistralApiService {
   private client: Mistral;
 
@@ -28,7 +41,7 @@ export class MistralApiService {
           documentUrl: `data:application/pdf;base64,${base64Data}`
         },
         includeImageBase64: true
-      });
+      }) as OCRResponse;
 
       console.log('Mistral OCR response received:', ocrResponse);
 
@@ -184,7 +197,8 @@ ${supportingContent}`;
         throw new Error('No response from Mistral API');
       }
 
-      return chatResponse.choices[0].message.content || 'Analysis completed but no content returned.';
+      const content = chatResponse.choices[0].message.content;
+      return typeof content === 'string' ? content : 'Analysis completed but no content returned.';
     } catch (error) {
       console.error('FEMA compliance analysis failed:', error);
       throw error;
