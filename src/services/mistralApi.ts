@@ -37,18 +37,16 @@ export class MistralApiService {
       let pageCount = 0;
 
       // Handle different response formats
-      if (ocrResponse.content) {
-        ocrContent = ocrResponse.content;
+      if (ocrResponse.text) {
+        ocrContent = ocrResponse.text;
       } else if (ocrResponse.pages) {
         pageCount = ocrResponse.pages.length;
         
         for (const page of ocrResponse.pages) {
-          if (page.text) {
-            ocrContent += `\n--- Page ${page.pageNumber || pageCount} ---\n${page.text}\n`;
+          if (page.content) {
+            ocrContent += `\n--- Page ${page.page_number || pageCount} ---\n${page.content}\n`;
           }
         }
-      } else if (ocrResponse.text) {
-        ocrContent = ocrResponse.text;
       } else {
         // Fallback: convert entire response to string
         ocrContent = typeof ocrResponse === 'string' ? ocrResponse : JSON.stringify(ocrResponse, null, 2);
