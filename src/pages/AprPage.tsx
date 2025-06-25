@@ -108,9 +108,9 @@ The Mistral API key is not configured. Please contact the administrator to set u
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-light/20 to-white">
-      {/* Header Bar */}
-      <header className="bg-brand-dark shadow-xl border-b border-brand-dark/20">
+    <div className="min-h-screen bg-white">
+      {/* Header Bar - Solid background for maximum contrast */}
+      <header className="bg-brand-dark shadow-xl">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
@@ -166,105 +166,111 @@ The Mistral API key is not configured. Please contact the administrator to set u
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Main Title */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center shadow-card">
-              <FileText className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-5xl font-bold text-text">
-              Form APR Reconciler
-            </h2>
-          </div>
-          <p className="text-xl text-text-light font-light">
-            AI-driven FEMA compliance review powered by Mistral OCR
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-8">
-            {/* Upload Section - Collapsible */}
-            <div className="bg-white rounded-2xl shadow-card border border-grey/10">
-              <div 
-                className="flex items-center justify-between p-8 cursor-pointer group"
-                onClick={() => setIsUploadSectionCollapsed(!isUploadSectionCollapsed)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center">
-                    <Upload className="w-6 h-6 text-brand-dark" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-text">
-                    Upload Documents
-                  </h3>
-                </div>
-                <div className="text-grey group-hover:text-text transition-colors">
-                  {isUploadSectionCollapsed ? (
-                    <ChevronDown className="w-5 h-5" />
-                  ) : (
-                    <ChevronUp className="w-5 h-5" />
-                  )}
-                </div>
+      {/* Main content with light background for better text contrast */}
+      <div className="bg-gradient-to-b from-brand-light/10 to-white">
+        <div className="container mx-auto px-4 py-12">
+          {/* Main Title - High contrast on light background */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center shadow-card">
+                <FileText className="w-8 h-8 text-white" />
               </div>
-              
-              {!isUploadSectionCollapsed && (
-                <div className="px-8 pb-8">
-                  <FileUpload
-                    formPdf={formPdf}
-                    supportingFiles={supportingFiles}
-                    onFormPdfChange={setFormPdf}
-                    onSupportingFilesChange={setSupportingFiles}
-                  />
-                </div>
-              )}
+              <h2 className="text-5xl font-bold text-text">
+                Form APR Reconciler
+              </h2>
             </div>
+            {/* Fixed subline with high contrast */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 inline-block shadow-card border border-grey/10">
+              <p className="text-xl text-text font-medium">
+                AI-driven FEMA compliance review powered by Mistral OCR
+              </p>
+            </div>
+          </div>
 
-            {/* Analyze Button */}
-            <Button
-              onClick={handleAnalyze}
-              disabled={!formPdf || isAnalyzing}
-              size="lg"
-              className="w-full"
-            >
-              {isAnalyzing ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {analysisProgress || 'Analyzing Documents...'}
-                </div>
-              ) : (
-                'Start Analysis'
-              )}
-            </Button>
-
-            {/* Progress Info */}
-            {isAnalyzing && analysisProgress && (
-              <div className="bg-gradient-to-r from-brand-light to-brand-light/50 border border-brand-dark/20 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
-                    <AlertCircle className="w-4 h-4 text-white" />
+          <div className="grid lg:grid-cols-3 gap-12">
+            {/* Left Sidebar */}
+            <div className="lg:col-span-1 space-y-8">
+              {/* Upload Section - Collapsible */}
+              <div className="bg-white rounded-2xl shadow-card border border-grey/10">
+                <div 
+                  className="flex items-center justify-between p-8 cursor-pointer group"
+                  onClick={() => setIsUploadSectionCollapsed(!isUploadSectionCollapsed)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center">
+                      <Upload className="w-6 h-6 text-brand-dark" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-text">
+                      Upload Documents
+                    </h3>
                   </div>
-                  <p className="text-brand-dark font-semibold">
-                    {analysisProgress}
+                  <div className="text-grey group-hover:text-text transition-colors">
+                    {isUploadSectionCollapsed ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronUp className="w-5 h-5" />
+                    )}
+                  </div>
+                </div>
+                
+                {!isUploadSectionCollapsed && (
+                  <div className="px-8 pb-8">
+                    <FileUpload
+                      formPdf={formPdf}
+                      supportingFiles={supportingFiles}
+                      onFormPdfChange={setFormPdf}
+                      onSupportingFilesChange={setSupportingFiles}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Analyze Button */}
+              <Button
+                onClick={handleAnalyze}
+                disabled={!formPdf || isAnalyzing}
+                size="lg"
+                className="w-full"
+              >
+                {isAnalyzing ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {analysisProgress || 'Analyzing Documents...'}
+                  </div>
+                ) : (
+                  'Start Analysis'
+                )}
+              </Button>
+
+              {/* Progress Info */}
+              {isAnalyzing && analysisProgress && (
+                <div className="bg-white border border-brand-dark/20 rounded-2xl p-6 shadow-card">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
+                      <AlertCircle className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-brand-dark font-semibold">
+                      {analysisProgress}
+                    </p>
+                  </div>
+                  <p className="text-text-light text-sm">
+                    Using official Mistral OCR API (mistral-ocr-latest)
                   </p>
                 </div>
-                <p className="text-text-light text-sm">
-                  Using official Mistral OCR API (mistral-ocr-latest)
-                </p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-card p-8 border border-grey/10">
-              <h3 className="text-2xl font-semibold text-text mb-8 flex items-center gap-3">
-                <div className="w-8 h-8 bg-mna-yellow rounded-lg flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-white" />
-                </div>
-                Review Results
-              </h3>
-              <ReviewOutput output={reviewOutput} isAnalyzing={isAnalyzing} />
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl shadow-card p-8 border border-grey/10">
+                <h3 className="text-2xl font-semibold text-text mb-8 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-mna-yellow rounded-lg flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-white" />
+                  </div>
+                  Review Results
+                </h3>
+                <ReviewOutput output={reviewOutput} isAnalyzing={isAnalyzing} />
+              </div>
             </div>
           </div>
         </div>
