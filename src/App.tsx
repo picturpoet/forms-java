@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
-import { ConfigPanel } from './components/ConfigPanel';
 import { ReviewOutput } from './components/ReviewOutput';
 import { ApiKeySetup } from './components/ApiKeySetup';
-import { FileText, Settings, Upload } from 'lucide-react';
+import { FileText, Upload } from 'lucide-react';
 
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
@@ -98,17 +97,6 @@ Please address the identified issues before final submission to the RBI portal.
                 onFormPdfChange={setFormPdf}
                 onSupportingFilesChange={setSupportingFiles}
               />
-            </div>
-
-            {/* Configuration */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Settings className="w-5 h-5 text-indigo-600" />
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Analysis Settings
-                </h2>
-              </div>
-              <ConfigPanel />
             </div>
 
             {/* Analyze Button */}
