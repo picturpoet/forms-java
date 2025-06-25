@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
 import { ReviewOutput } from '../components/ReviewOutput';
 import { MistralApiService } from '../services/mistralApi';
-import { FileText, Upload, ChevronUp, ChevronDown, ArrowLeft, AlertCircle } from 'lucide-react';
+import { FileText, Upload, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { Header } from '../components/Header';
 
 export function AprPage() {
   const [formPdf, setFormPdf] = useState<File | null>(null);
@@ -12,7 +13,6 @@ export function AprPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [isUploadSectionCollapsed, setIsUploadSectionCollapsed] = useState(false);
-  const [logoError, setLogoError] = useState(false);
 
   const handleAnalyze = async () => {
     if (!formPdf) return;
@@ -109,62 +109,8 @@ The Mistral API key is not configured. Please contact the administrator to set u
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header Bar - Solid background for maximum contrast */}
-      <header className="bg-brand-dark shadow-xl">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              {/* Back to Home */}
-              <a 
-                href="/"
-                className="text-white hover:text-brand-light transition-colors p-3 rounded-xl hover:bg-white/10 group"
-                title="Back to Home"
-              >
-                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-              </a>
-
-              {/* Logo with fallback */}
-              {!logoError ? (
-                <img 
-                  src="/logo.png" 
-                  alt="Regality AI Logo" 
-                  className="w-10 h-10 rounded-xl object-cover shadow-card"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-card">
-                  <div className="w-6 h-6 bg-brand-dark rounded"></div>
-                </div>
-              )}
-              
-              {/* Brand Name */}
-              <h1 className="text-white text-2xl font-garamond font-semibold">
-                Regality AI
-              </h1>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              <a 
-                href="https://regality.ai" 
-                className="text-white/80 hover:text-white transition-colors font-medium"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                About
-              </a>
-              <a 
-                href="https://regality.ai/contact/" 
-                className="text-white/80 hover:text-white transition-colors font-medium"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Contact
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Consistent Header with Back Button */}
+      <Header showBackButton={true} currentPage="apr" />
 
       {/* Main content with consistent container */}
       <div className="bg-gradient-to-b from-brand-light/10 to-white">
@@ -173,7 +119,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
           <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center shadow-card">
-                <FileText className="w-8 h-8 text-white" />
+                <FileText className="w-8 h-8 text-white" strokeWidth={2} />
               </div>
               <h2 className="text-5xl font-bold text-text">
                 Form APR Reconciler
@@ -199,7 +145,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center">
-                      <Upload className="w-6 h-6 text-brand-dark" />
+                      <Upload className="w-6 h-6 text-brand-dark" strokeWidth={2} />
                     </div>
                     <h3 className="text-xl font-semibold text-text">
                       Upload Documents
@@ -207,9 +153,9 @@ The Mistral API key is not configured. Please contact the administrator to set u
                   </div>
                   <div className="text-grey group-hover:text-text transition-colors">
                     {isUploadSectionCollapsed ? (
-                      <ChevronDown className="w-5 h-5" />
+                      <ChevronDown className="w-5 h-5" strokeWidth={2} />
                     ) : (
-                      <ChevronUp className="w-5 h-5" />
+                      <ChevronUp className="w-5 h-5" strokeWidth={2} />
                     )}
                   </div>
                 </div>
@@ -248,7 +194,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
                 <div className="bg-white border border-brand-dark/20 rounded-2xl p-6 shadow-card">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center">
-                      <AlertCircle className="w-4 h-4 text-white" />
+                      <AlertCircle className="w-4 h-4 text-white" strokeWidth={2} />
                     </div>
                     <p className="text-brand-dark font-semibold">
                       {analysisProgress}
@@ -266,7 +212,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
               <div className="bg-white rounded-2xl shadow-card p-8 border border-grey/10">
                 <h3 className="text-2xl font-semibold text-text mb-8 flex items-center gap-3">
                   <div className="w-8 h-8 bg-mna-yellow rounded-lg flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-white" />
+                    <FileText className="w-4 h-4 text-white" strokeWidth={2} />
                   </div>
                   Review Results
                 </h3>

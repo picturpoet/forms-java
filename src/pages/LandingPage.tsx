@@ -1,59 +1,13 @@
 import { ArrowRight, FileText, Zap, Clock, Brain, ExternalLink, CheckCircle, Monitor, Smartphone, ZapIcon, ClockIcon } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '../components/ui/Button';
 import { CardTile } from '../components/ui/CardTile';
+import { Header } from '../components/Header';
 
 export function LandingPage() {
-  const [logoError, setLogoError] = useState(false);
-
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-grey/10 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Logo with fallback */}
-              {!logoError ? (
-                <img 
-                  src="/logo.png" 
-                  alt="Regality AI Logo" 
-                  className="w-10 h-10 rounded-xl object-cover shadow-card"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <div className="w-10 h-10 bg-brand-dark rounded-xl flex items-center justify-center shadow-card">
-                  <div className="w-6 h-6 bg-white rounded"></div>
-                </div>
-              )}
-              
-              <h1 className="text-brand-dark text-2xl font-garamond font-semibold">
-                Regality AI
-              </h1>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              <a 
-                href="https://regality.ai" 
-                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                About
-              </a>
-              <a 
-                href="https://regality.ai/contact/" 
-                className="text-text-light hover:text-text transition-colors font-medium min-h-[44px] flex items-center"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Contact
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Consistent Header */}
+      <Header currentPage="landing" />
 
       {/* Hero Section - Content Above Visual */}
       <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-8 pb-12">
@@ -284,19 +238,9 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              {/* Logo with fallback */}
-              {!logoError ? (
-                <img 
-                  src="/logo.png" 
-                  alt="Regality AI Logo" 
-                  className="w-8 h-8 rounded-lg object-cover shadow-card"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center shadow-card">
-                  <div className="w-4 h-4 bg-white rounded"></div>
-                </div>
-              )}
+              <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center shadow-card">
+                <div className="w-4 h-4 bg-white rounded"></div>
+              </div>
               <span className="text-text-light font-medium">
                 © 2025 Regality AI. Built for regulatory excellence.
               </span>
