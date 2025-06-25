@@ -1,5 +1,4 @@
-import React from 'react';
-import { Download, FileText, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Download, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface ReviewOutputProps {
   output: string;

@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface AnalysisConfig {
   model: string;
   temperature: number;
