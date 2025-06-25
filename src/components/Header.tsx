@@ -14,7 +14,6 @@ export function Header({ showBackButton = false, currentPage = 'landing' }: Head
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Back Button for APR page */}
             {showBackButton && (
               <a 
                 href="/"
@@ -25,7 +24,6 @@ export function Header({ showBackButton = false, currentPage = 'landing' }: Head
               </a>
             )}
 
-            {/* Logo with fallback */}
             {!logoError ? (
               <img 
                 src="/logo.png" 
@@ -44,7 +42,6 @@ export function Header({ showBackButton = false, currentPage = 'landing' }: Head
             </h1>
           </div>
 
-          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <a 
               href="https://regality.ai" 
