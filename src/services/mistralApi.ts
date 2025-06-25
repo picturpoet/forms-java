@@ -20,22 +20,26 @@ export class MistralApiService {
       // Convert file to base64 for document processing
       const base64Data = await this.fileToBase64(file);
       
-      // Use Mistral OCR API with correct document structure
+      // Use Mistral OCR API with document_url format (matching Python implementation)
       const ocrResponse = await this.client.ocr.process({
         model: "mistral-ocr-latest",
         document: {
-          documentBase64: base64Data
+          type: "document_url",
+          documentUrl: `data:application/pdf;base64,${base64Data}`
         },
         includeImageBase64: true
       });
 
-      console.log('Mistral OCR response received');
+      console.log('Mistral OCR response received:', ocrResponse);
 
       // Extract text content from OCR response
       let ocrContent = '';
       let pageCount = 0;
 
-      if (ocrResponse.pages) {
+      // Handle different response formats
+      if (ocrResponse.content) {
+        ocrContent = ocrResponse.content;
+      } else if (ocrResponse.pages) {
         pageCount = ocrResponse.pages.length;
         
         for (const page of ocrResponse.pages) {
@@ -43,20 +47,19 @@ export class MistralApiService {
             ocrContent += `\n--- Page ${page.pageNumber || pageCount} ---\n${page.text}\n`;
           }
         }
+      } else if (ocrResponse.text) {
+        ocrContent = ocrResponse.text;
+      } else {
+        // Fallback: convert entire response to string
+        ocrContent = typeof ocrResponse === 'string' ? ocrResponse : JSON.stringify(ocrResponse, null, 2);
       }
 
-      // Also extract any direct text content if available
-      let textContent = '';
-      if (ocrResponse.text) {
-        textContent = ocrResponse.text;
-      }
-
-      console.log(`OCR processing complete. Pages: ${pageCount}, OCR content length: ${ocrContent.length}`);
+      console.log(`OCR processing complete. Content length: ${ocrContent.length}`);
 
       return {
-        textContent,
+        textContent: '',
         ocrContent: ocrContent.trim(),
-        pageCount
+        pageCount: pageCount || 1
       };
     } catch (error) {
       console.error('Mistral OCR processing failed:', error);
@@ -71,56 +74,109 @@ export class MistralApiService {
     try {
       console.log('Starting FEMA compliance analysis...');
 
-      const fullContent = `
-MAIN FORM APR DOCUMENT (OCR EXTRACTED):
+      // Use the same review prompt as your Python version
+      const reviewPrompt = `
+System Prompt: "APR-Guardian" 
+You are APR-Guardian, a domain-specialist Small Language Model trained to audit and 
+reconcile India's Overseas Investment Annual Performance Report ("Form APR") with every 
+supporting record supplied by the filer. Your sole mission is to detect omissions, inconsistencies, 
+and regulatory breaches before the APR is uploaded to the Reserve Bank's online OID portal, 
+thereby helping the user submit a flawless, fully-compliant return.  
+ 
+1 Scope of work – what you must examine 
+On every run, ingest all artefacts in the user's packet: the filled and signed Form APR (Sections 
+I-XII, declarations, CA / auditor certificate and AD-bank certificate) together with its 
+corroborative documents—audited or certified financial statements, share certificates, RBI UIN-
+allotment letter, bank statements, trial balances, earlier APRs, SDS schedules and any 
+Excel/CSV workings. Load each page completely before starting the review so nothing escapes 
+scrutiny. 
+
+2 Assessment philosophy – how you should think 
+Work through the filing section by section, line by line, applying four sequential lenses: 
+A.Completeness: every cell, tick-box, signature, date and stamp must be present. 
+B.Consistency: totals and narratives must agree across the form and against external 
+evidence (e.g., dividend declared in Section VI(ii) must equal the dividend repatriated in 
+Section VII(i) and match the bank credit). 
+C.Cross-document validation: reconcile each numeric or textual fact with the relevant 
+proof—financial statements, share registry, RBI/AD-bank confirmations, etc. 
+D.Regulatory conformance: flag any divergence from the Foreign Exchange Management 
+Act, 1999, the Overseas Investment Rules & Regulations, 2022 and RBI master 
+directions—e.g., share-certificate receipt outside six-month window (Reg. 9(1)), non-
+repatriation of dues (Reg. 9(4)), or unreported SDS events (Reg. 10(4)(c)).  
+
+3 Granular checkpoints – what to verify inside each part of Form APR 
+∙Section I (APR period): match From and To dates with the ODI entity's financial-year 
+dates in its statements; ensure the report covers a full accounting year. 
+∙Section II (UIN): confirm the 15/17-digit RBI number against the UIN-allotment letter. 
+∙Section III (Capital structure): validate cumulative Indian-versus-foreign investment 
+amounts and %-stakes with audited equity schedule and share certificates; percentages 
+must sum to 100 %. 
+∙Section IV (Control test): if Indian stake ≥ 10 % (alone or acting in concert) record Yes, 
+else No. 
+∙Section V (Shareholding changes): compare with the previous year's APR and 
+corporate records; if altered, verify new amounts and dates. 
+∙Section VI (Financial position): reconcile prior-year and current-year profit/loss, 
+dividend and net-worth with audited accounts (treat negative retained earnings as zero). 
+∙Section VII (Repatriations): tie every inflow—dividends, loan repayments, royalties, 
+fees, "others"—to bank credits in India; cumulative "since commencement" figures must 
+be ≥ current-year values. 
+∙Section VIII & IX (Profit & retained earnings): link to income statement and 
+statement of changes in equity. 
+∙Section X (Upstream FDI): confirm any investment by the foreign entity or its SDS into 
+India with FCGPR/FC-TRS filings. 
+∙Section XI (Refund of excess share-application money): authenticate the transaction 
+number with the RBI OID portal acknowledgement. 
+∙Section XII (SDS movements): for each acquisition, set-up, winding-up or transfer, 
+inspect supporting corporate resolutions, investment schedules and ensure structure 
+retains limited liability where required. 
+∙Declarations & Certificates: 
+oVerify that the authorised official and statutory auditor/CA have signed, dated and 
+affixed seal/UDIN (check UDIN validity via ICAI portal). 
+oConfirm AD-bank certificate acknowledges receipt of share certificates and states 
+prior APRs are lodged. 
+
+4 Output you must generate 
+Produce a three-part report every time: 
+A.Executive Summary (≤ 200 words) highlighting critical red-flags that would block 
+submission. 
+B.Detailed Review Table containing, for each form field, the filed value, the evidence 
+checked, the issue classification (Missing / Inconsistent / Non-compliant / OK) and a 
+precise corrective action. 
+C.Document Deficiency List enumerating any missing proofs (share certificates, bank 
+FIRCs, board approvals, etc.) and citing the regulation breached. 
+Conclude with an overall readiness verdict: "Clear to File", "File with Minor Fixes" or "Hold 
+– Major Issues". 
+
+5 Interaction rules 
+∙No assumptions—where data or proof is absent, flag it and request it explicitly. 
+∙One-shot clarity—write comments in a professional, objective tone; avoid legal 
+disclaimers unless the user asks. 
+∙Data privacy—never reveal, store or transmit user data outside this review. 
+∙When uncertain, ask a targeted follow-up question rather than leaving a field unchecked. 
+Adhering to these instructions ensures the APR-Guardian model delivers consistent, regulator-
+ready reconciliations for every Annual Performance Report it reviews.
+`;
+
+      const fullContent = `OCR EXTRACTED TEXT:
 ${documentContent.ocrContent}
 
-${documentContent.textContent ? `\nDIRECT TEXT CONTENT:\n${documentContent.textContent}` : ''}
+SUPPORTING DOCUMENTS:
+${supportingContent}`;
 
-${supportingContent ? `\nSUPPORTING DOCUMENTS:\n${supportingContent}` : ''}
-      `.trim();
-
-      // Use chat completions for analysis
+      // Use chat completions for analysis (matching Python approach)
       const chatResponse = await this.client.chat.complete({
-        model: "mistral-large-latest",
+        model: "mistral-medium-latest", // Using same model as Python version
         messages: [
           {
             role: "system",
-            content: `You are an expert FEMA compliance analyst specializing in Form APR (Annual Performance Report) reviews under India's Overseas Investment regulations (FEMA, 1999; OI Rules, 2022).
-
-Your task is to:
-1. Analyze the provided Form APR document thoroughly
-2. Identify compliance issues, missing information, and inconsistencies
-3. Check against FEMA regulations and RBI guidelines
-4. Provide specific, actionable recommendations
-
-Format your response as a detailed compliance report with:
-- Executive Summary
-- Section-by-section analysis with field names
-- Compliance status for each critical field
-- Missing documentation checklist
-- Recommended actions before submission
-
-Use these status indicators:
-- ✅ OK - Compliant and complete
-- ⚠️ Requires Verification - Needs attention or clarification
-- ❌ Incomplete/Non-compliant - Must fix before submission
-
-Be thorough, specific, and reference relevant FEMA rules where applicable. Focus on:
-- UIN validation
-- Capital structure accuracy
-- Dividend/income reporting
-- Supporting document requirements
-- Regulatory compliance dates`
+            content: reviewPrompt
           },
           {
             role: "user",
-            content: `Please analyze this Form APR document for FEMA compliance:
-
-${fullContent}`
+            content: fullContent
           }
         ],
-        temperature: 0.3,
+        temperature: 0.3, // Default temperature from Python version
         maxTokens: 4000
       });
 
@@ -159,17 +215,17 @@ ${fullContent}`
         if (file.type === 'application/pdf') {
           console.log(`Processing supporting PDF: ${file.name}`);
           const processed = await this.processDocumentWithOCR(file);
-          combinedContent += `\n\n=== ${file.name} ===\n${processed.ocrContent || processed.textContent}`;
+          combinedContent += `\n--- ${file.name} ---\n${processed.ocrContent}`;
         } else if (file.type.includes('spreadsheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.csv')) {
           // For spreadsheet files, we'll note their presence
           // In a production version, you'd want to parse these with a spreadsheet library
-          combinedContent += `\n\n=== ${file.name} ===\n[Spreadsheet file - please ensure data matches Form APR entries]`;
+          combinedContent += `\n--- ${file.name} ---\n[Spreadsheet file - please ensure data matches Form APR entries]`;
         } else {
-          combinedContent += `\n\n=== ${file.name} ===\n[File type not supported for OCR processing]`;
+          combinedContent += `\n--- ${file.name} ---\n[File type not supported for OCR processing]`;
         }
       } catch (error) {
         console.error(`Failed to process ${file.name}:`, error);
-        combinedContent += `\n\n=== ${file.name} ===\n[Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}]`;
+        combinedContent += `\n--- ${file.name} ---\n[Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}]`;
       }
     }
     
