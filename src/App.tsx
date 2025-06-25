@@ -3,7 +3,7 @@ import { FileUpload } from './components/FileUpload';
 import { ReviewOutput } from './components/ReviewOutput';
 import { ApiKeySetup } from './components/ApiKeySetup';
 import { MistralApiService } from './services/mistralApi';
-import { FileText, Upload } from 'lucide-react';
+import { FileText, Upload, ChevronUp, ChevronDown } from 'lucide-react';
 
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
@@ -12,12 +12,14 @@ function App() {
   const [reviewOutput, setReviewOutput] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
+  const [isUploadSectionCollapsed, setIsUploadSectionCollapsed] = useState(false);
 
   const handleAnalyze = async () => {
     if (!formPdf || !apiKey) return;
 
     setIsAnalyzing(true);
     setReviewOutput('');
+    setIsUploadSectionCollapsed(true); // Collapse upload section when analysis starts
     
     try {
       const mistralService = new MistralApiService(apiKey);
@@ -128,20 +130,35 @@ function App() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Upload Section */}
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
-              <div className="flex items-center gap-2 mb-4">
-                <Upload className="w-5 h-5 text-primary-600" />
-                <h3 className="text-xl font-semibold text-text">
-                  Upload Documents
-                </h3>
+            {/* Upload Section - Collapsible */}
+            <div className="bg-white rounded-xl shadow-lg border border-grey-200">
+              <div 
+                className="flex items-center justify-between p-6 cursor-pointer"
+                onClick={() => setIsUploadSectionCollapsed(!isUploadSectionCollapsed)}
+              >
+                <div className="flex items-center gap-2">
+                  <Upload className="w-5 h-5 text-primary-600" />
+                  <h3 className="text-xl font-semibold text-text">
+                    Upload Documents
+                  </h3>
+                </div>
+                {isUploadSectionCollapsed ? (
+                  <ChevronDown className="w-5 h-5 text-grey-400" />
+                ) : (
+                  <ChevronUp className="w-5 h-5 text-grey-400" />
+                )}
               </div>
-              <FileUpload
-                formPdf={formPdf}
-                supportingFiles={supportingFiles}
-                onFormPdfChange={setFormPdf}
-                onSupportingFilesChange={setSupportingFiles}
-              />
+              
+              {!isUploadSectionCollapsed && (
+                <div className="px-6 pb-6">
+                  <FileUpload
+                    formPdf={formPdf}
+                    supportingFiles={supportingFiles}
+                    onFormPdfChange={setFormPdf}
+                    onSupportingFilesChange={setSupportingFiles}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Analyze Button */}
@@ -171,19 +188,6 @@ function App() {
                 </p>
               </div>
             )}
-
-            {/* API Info */}
-            <div className="bg-accent-yellow-light border border-accent-yellow rounded-lg p-4">
-              <h4 className="text-sm font-semibold text-text mb-2">
-                🔧 Technical Details
-              </h4>
-              <ul className="text-xs text-text-light space-y-1">
-                <li>• OCR Model: mistral-ocr-latest</li>
-                <li>• Analysis Model: mistral-large-latest</li>
-                <li>• Official Mistral SDK: @mistralai/mistralai</li>
-                <li>• FEMA compliance focused</li>
-              </ul>
-            </div>
           </div>
 
           {/* Main Content */}

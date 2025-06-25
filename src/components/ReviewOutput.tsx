@@ -1,4 +1,4 @@
-import { Download, FileText, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Download, FileText, AlertCircle, CheckCircle, Clock, Table } from 'lucide-react';
 
 interface ReviewOutputProps {
   output: string;
@@ -18,6 +18,181 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const renderMarkdownContent = (content: string) => {
+    const lines = content.split('\n');
+    const elements: JSX.Element[] = [];
+    let currentIndex = 0;
+
+    while (currentIndex < lines.length) {
+      const line = lines[currentIndex].trim();
+      
+      if (!line) {
+        currentIndex++;
+        continue;
+      }
+
+      // Headers
+      if (line.startsWith('#')) {
+        const level = (line.match(/^#+/) || [''])[0].length;
+        const text = line.replace(/^#+\s*/, '');
+        
+        if (level === 1) {
+          elements.push(
+            <h1 key={currentIndex} className="text-3xl font-bold text-text mb-6 border-b-2 border-primary-200 pb-3">
+              {text}
+            </h1>
+          );
+        } else if (level === 2) {
+          elements.push(
+            <h2 key={currentIndex} className="text-2xl font-semibold text-text mb-4 border-b border-grey-200 pb-2 mt-8">
+              {text}
+            </h2>
+          );
+        } else if (level === 3) {
+          elements.push(
+            <h3 key={currentIndex} className="text-xl font-medium text-text mb-3 mt-6">
+              {text}
+            </h3>
+          );
+        } else {
+          elements.push(
+            <h4 key={currentIndex} className="text-lg font-medium text-text mb-2 mt-4">
+              {text}
+            </h4>
+          );
+        }
+      }
+      // Bold text
+      else if (line.startsWith('**') && line.endsWith('**')) {
+        const text = line.replace(/^\*\*|\*\*$/g, '');
+        elements.push(
+          <p key={currentIndex} className="font-semibold text-text mb-2">
+            {text}
+          </p>
+        );
+      }
+      // Status indicators
+      else if (line.includes('✅') || line.includes('⚠️') || line.includes('❌')) {
+        const isSuccess = line.includes('✅');
+        const isWarning = line.includes('⚠️');
+        const isError = line.includes('❌');
+        
+        elements.push(
+          <div
+            key={currentIndex}
+            className={`p-4 rounded-lg border-l-4 mb-4 ${
+              isSuccess
+                ? 'bg-green-50 border-accent-yellow'
+                : isWarning
+                ? 'bg-accent-yellow-light border-accent-orange'
+                : isError
+                ? 'bg-red-50 border-red-400'
+                : 'bg-grey-50 border-grey-400'
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              {isSuccess && <CheckCircle className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />}
+              {(isWarning || isError) && <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isError ? 'text-red-600' : 'text-accent-orange'}`} />}
+              <div className="text-sm text-text leading-relaxed">
+                {line}
+              </div>
+            </div>
+          </div>
+        );
+      }
+      // Lists
+      else if (line.startsWith('- ') || line.startsWith('• ') || line.match(/^\d+\./)) {
+        const listItems = [];
+        let listIndex = currentIndex;
+        
+        while (listIndex < lines.length && (lines[listIndex].trim().startsWith('- ') || lines[listIndex].trim().startsWith('• ') || lines[listIndex].trim().match(/^\d+\./))) {
+          const listLine = lines[listIndex].trim();
+          const text = listLine.replace(/^[-•]\s*|\d+\.\s*/, '');
+          listItems.push(
+            <li key={listIndex} className="mb-1">
+              {text}
+            </li>
+          );
+          listIndex++;
+        }
+        
+        const isOrdered = lines[currentIndex].trim().match(/^\d+\./);
+        const ListTag = isOrdered ? 'ol' : 'ul';
+        const listClass = isOrdered ? 'list-decimal list-inside' : 'list-disc list-inside';
+        
+        elements.push(
+          <ListTag key={currentIndex} className={`${listClass} text-sm text-text-light mb-4 space-y-1 bg-grey-50 p-4 rounded-lg border border-grey-200`}>
+            {listItems}
+          </ListTag>
+        );
+        
+        currentIndex = listIndex - 1;
+      }
+      // Tables (simple detection)
+      else if (line.includes('|') && lines[currentIndex + 1]?.includes('|')) {
+        const tableLines = [];
+        let tableIndex = currentIndex;
+        
+        while (tableIndex < lines.length && lines[tableIndex].trim().includes('|')) {
+          tableLines.push(lines[tableIndex].trim());
+          tableIndex++;
+        }
+        
+        if (tableLines.length > 1) {
+          const headers = tableLines[0].split('|').map(h => h.trim()).filter(h => h);
+          const rows = tableLines.slice(2).map(row => 
+            row.split('|').map(cell => cell.trim()).filter(cell => cell)
+          );
+          
+          elements.push(
+            <div key={currentIndex} className="mb-6 overflow-x-auto">
+              <div className="flex items-center gap-2 mb-3">
+                <Table className="w-4 h-4 text-primary-600" />
+                <span className="text-sm font-medium text-text">Review Table</span>
+              </div>
+              <table className="w-full border border-grey-300 rounded-lg overflow-hidden">
+                <thead className="bg-primary-50">
+                  <tr>
+                    {headers.map((header, idx) => (
+                      <th key={idx} className="px-4 py-3 text-left text-sm font-semibold text-text border-b border-grey-300">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, rowIdx) => (
+                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-grey-50'}>
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className="px-4 py-3 text-sm text-text border-b border-grey-200">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+          
+          currentIndex = tableIndex - 1;
+        }
+      }
+      // Regular paragraphs
+      else {
+        elements.push(
+          <p key={currentIndex} className="text-sm text-text-light leading-relaxed mb-3">
+            {line}
+          </p>
+        );
+      }
+      
+      currentIndex++;
+    }
+
+    return elements;
   };
 
   if (isAnalyzing) {
@@ -52,39 +227,6 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
     );
   }
 
-  // Parse the output to identify different sections and status indicators
-  const lines = output.split('\n');
-  const sections: Array<{ type: 'header' | 'status' | 'content'; content: string; level?: number }> = [];
-  
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) continue;
-    
-    // Detect headers
-    if (trimmedLine.startsWith('#')) {
-      const level = (trimmedLine.match(/^#+/) || [''])[0].length;
-      sections.push({
-        type: 'header',
-        content: trimmedLine.replace(/^#+\s*/, ''),
-        level
-      });
-    }
-    // Detect status lines
-    else if (trimmedLine.includes('✅') || trimmedLine.includes('⚠️') || trimmedLine.includes('❌')) {
-      sections.push({
-        type: 'status',
-        content: trimmedLine
-      });
-    }
-    // Regular content
-    else {
-      sections.push({
-        type: 'content',
-        content: trimmedLine
-      });
-    }
-  }
-  
   return (
     <div className="space-y-6">
       {/* Download Button */}
@@ -98,60 +240,9 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
         </button>
       </div>
 
-      {/* Review Content */}
+      {/* Review Content with Proper Markdown Rendering */}
       <div className="space-y-4">
-        {sections.map((section, index) => {
-          if (section.type === 'header') {
-            const HeaderTag = section.level === 1 ? 'h2' : section.level === 2 ? 'h3' : 'h4';
-            const headerClasses = section.level === 1 
-              ? 'text-2xl font-bold text-text border-b-2 border-primary-200 pb-3'
-              : section.level === 2
-              ? 'text-xl font-semibold text-text border-b border-grey-200 pb-2'
-              : 'text-lg font-medium text-text';
-              
-            return (
-              <HeaderTag key={index} className={headerClasses}>
-                {section.content}
-              </HeaderTag>
-            );
-          }
-          
-          if (section.type === 'status') {
-            const isSuccess = section.content.includes('✅');
-            const isWarning = section.content.includes('⚠️');
-            const isError = section.content.includes('❌');
-            
-            return (
-              <div
-                key={index}
-                className={`p-4 rounded-lg border-l-4 ${
-                  isSuccess
-                    ? 'bg-green-50 border-accent-yellow'
-                    : isWarning
-                    ? 'bg-accent-yellow-light border-accent-orange'
-                    : isError
-                    ? 'bg-red-50 border-red-400'
-                    : 'bg-grey-50 border-grey-400'
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  {isSuccess && <CheckCircle className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />}
-                  {(isWarning || isError) && <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isError ? 'text-red-600' : 'text-accent-orange'}`} />}
-                  <div className="text-sm text-text leading-relaxed">
-                    {section.content}
-                  </div>
-                </div>
-              </div>
-            );
-          }
-          
-          // Regular content
-          return (
-            <div key={index} className="text-sm text-text-light leading-relaxed bg-grey-50 p-4 rounded-lg border border-grey-200">
-              {section.content}
-            </div>
-          );
-        })}
+        {renderMarkdownContent(output)}
       </div>
 
       {/* Analysis Info Footer */}
