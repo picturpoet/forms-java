@@ -36,13 +36,13 @@ export class MistralApiService {
       let ocrContent = '';
       let pageCount = 0;
 
-      // Handle different response formats
-      if (ocrResponse.text) {
-        ocrContent = ocrResponse.text;
-      } else if (ocrResponse.pages) {
-        pageCount = ocrResponse.pages.length;
+      // Handle different response formats - access through result property
+      if (ocrResponse.result?.text) {
+        ocrContent = ocrResponse.result.text;
+      } else if (ocrResponse.result?.pages) {
+        pageCount = ocrResponse.result.pages.length;
         
-        for (const page of ocrResponse.pages) {
+        for (const page of ocrResponse.result.pages) {
           if (page.content) {
             ocrContent += `\n--- Page ${page.page_number || pageCount} ---\n${page.content}\n`;
           }
