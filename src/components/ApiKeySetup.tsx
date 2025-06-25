@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Key, ExternalLink } from 'lucide-react';
 
 interface ApiKeySetupProps {
@@ -7,6 +7,17 @@ interface ApiKeySetupProps {
 
 export function ApiKeySetup({ onApiKeySet }: ApiKeySetupProps) {
   const [apiKey, setApiKey] = useState('');
+  const [hasDefaultKey, setHasDefaultKey] = useState(false);
+
+  useEffect(() => {
+    // Check for environment variable (build-time)
+    const defaultKey = import.meta.env.VITE_MISTRAL_API_KEY;
+    if (defaultKey) {
+      setHasDefaultKey(true);
+      // Optionally auto-set the default key
+      // onApiKeySet(defaultKey);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,17 +67,27 @@ export function ApiKeySetup({ onApiKeySet }: ApiKeySetupProps) {
                 id="apiKey"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your API key..."
+                placeholder={hasDefaultKey ? "Using default key or enter your own..." : "Enter your API key..."}
                 className="w-full px-4 py-3 border border-grey-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                required
+                required={!hasDefaultKey}
               />
             </div>
+
+            {hasDefaultKey && (
+              <button
+                type="button"
+                onClick={() => onApiKeySet(import.meta.env.VITE_MISTRAL_API_KEY!)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 mb-2"
+              >
+                Use Default API Key
+              </button>
+            )}
 
             <button
               type="submit"
               className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
             >
-              Continue
+              {hasDefaultKey ? "Use Custom Key" : "Continue"}
             </button>
           </form>
 
