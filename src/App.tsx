@@ -65,17 +65,17 @@ Please address the identified issues before final submission to the RBI portal.
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-indigo-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
+            <FileText className="w-8 h-8 text-primary-600" />
+            <h1 className="text-4xl font-bold text-text">
               Form APR Reconciler
             </h1>
           </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-text-light">
             powered by Regality - AI-driven FEMA compliance review
           </p>
         </div>
@@ -84,10 +84,10 @@ Please address the identified issues before final submission to the RBI portal.
           {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Upload Section */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
               <div className="flex items-center gap-2 mb-4">
-                <Upload className="w-5 h-5 text-indigo-600" />
-                <h2 className="text-xl font-semibold text-gray-900">
+                <Upload className="w-5 h-5 text-primary-600" />
+                <h2 className="text-xl font-semibold text-text">
                   Upload Documents
                 </h2>
               </div>
@@ -103,7 +103,7 @@ Please address the identified issues before final submission to the RBI portal.
             <button
               onClick={handleAnalyze}
               disabled={!formPdf || isAnalyzing}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
+              className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-grey-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
             >
               {isAnalyzing ? (
                 <div className="flex items-center justify-center gap-2">
@@ -118,8 +118,8 @@ Please address the identified issues before final submission to the RBI portal.
 
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-grey-200">
+              <h2 className="text-2xl font-semibold text-text mb-6">
                 Review Results
               </h2>
               <ReviewOutput output={reviewOutput} isAnalyzing={isAnalyzing} />

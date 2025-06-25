@@ -23,11 +23,11 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
   if (isAnalyzing) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
+        <h3 className="text-lg font-semibold text-text mb-2">
           Analyzing Your Documents
         </h3>
-        <p className="text-gray-600 max-w-md">
+        <p className="text-text-light max-w-md">
           Our AI is carefully reviewing your Form APR and supporting documents for compliance issues...
         </p>
       </div>
@@ -37,11 +37,11 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
   if (!output) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <FileText className="w-16 h-16 text-gray-300 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <FileText className="w-16 h-16 text-grey-300 mb-4" />
+        <h3 className="text-lg font-semibold text-text mb-2">
           Ready for Analysis
         </h3>
-        <p className="text-gray-600 max-w-md">
+        <p className="text-text-light max-w-md">
           Upload your Form APR and click "Start Analysis" to begin the compliance review.
         </p>
       </div>
@@ -57,7 +57,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
       <div className="flex justify-end">
         <button
           onClick={downloadReport}
-          className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 bg-accent-yellow hover:bg-accent-orange text-text px-4 py-2 rounded-lg transition-colors font-medium"
         >
           <Download className="w-4 h-4" />
           Download Report
@@ -73,7 +73,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           if (isHeader) {
             return (
               <div key={index} className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                <h3 className="text-lg font-semibold text-text border-b border-grey-200 pb-2">
                   {section.replace(/[#*]/g, '').trim()}
                 </h3>
               </div>
@@ -90,19 +90,19 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
                 key={index}
                 className={`p-4 rounded-lg border-l-4 ${
                   isSuccess
-                    ? 'bg-green-50 border-green-400'
+                    ? 'bg-green-50 border-accent-yellow'
                     : isWarning
-                    ? 'bg-yellow-50 border-yellow-400'
+                    ? 'bg-accent-yellow-light border-accent-orange'
                     : isError
                     ? 'bg-red-50 border-red-400'
-                    : 'bg-gray-50 border-gray-400'
+                    : 'bg-grey-50 border-grey-400'
                 }`}
               >
                 <div className="flex items-start gap-2">
-                  {isSuccess && <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />}
-                  {isWarning && <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />}
+                  {isSuccess && <CheckCircle className="w-5 h-5 text-accent-yellow mt-0.5 flex-shrink-0" />}
+                  {isWarning && <AlertCircle className="w-5 h-5 text-accent-orange mt-0.5 flex-shrink-0" />}
                   {isError && <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />}
-                  <div className="text-sm text-gray-800 whitespace-pre-wrap">
+                  <div className="text-sm text-text whitespace-pre-wrap">
                     {section}
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export function ReviewOutput({ output, isAnalyzing }: ReviewOutputProps) {
           }
           
           return (
-            <div key={index} className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg">
+            <div key={index} className="text-sm text-text-light whitespace-pre-wrap bg-grey-50 p-4 rounded-lg border border-grey-200">
               {section}
             </div>
           );
