@@ -5,17 +5,10 @@ import { ReviewOutput } from './components/ReviewOutput';
 import { ApiKeySetup } from './components/ApiKeySetup';
 import { FileText, Settings, Upload } from 'lucide-react';
 
-interface AnalysisConfig {
-  model: string;
-}
-
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
   const [formPdf, setFormPdf] = useState<File | null>(null);
   const [supportingFiles, setSupportingFiles] = useState<File[]>([]);
-  const [config, setConfig] = useState<AnalysisConfig>({
-    model: 'mistral-ocr-latest'
-  });
   const [reviewOutput, setReviewOutput] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -24,7 +17,7 @@ function App() {
 
     setIsAnalyzing(true);
     try {
-      // This would normally call the Mistral API with temperature: 0.8
+      // This would normally call the Mistral API with model: 'mistral-ocr-latest' and temperature: 0.8
       // For now, we'll show a placeholder response
       const mockResponse = `
 # Executive Summary
@@ -115,7 +108,7 @@ Please address the identified issues before final submission to the RBI portal.
                   Analysis Settings
                 </h2>
               </div>
-              <ConfigPanel config={config} onConfigChange={setConfig} />
+              <ConfigPanel />
             </div>
 
             {/* Analyze Button */}
