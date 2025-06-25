@@ -7,7 +7,6 @@ import { FileText, Settings, Upload } from 'lucide-react';
 
 interface AnalysisConfig {
   model: string;
-  temperature: number;
 }
 
 function App() {
@@ -15,8 +14,7 @@ function App() {
   const [formPdf, setFormPdf] = useState<File | null>(null);
   const [supportingFiles, setSupportingFiles] = useState<File[]>([]);
   const [config, setConfig] = useState<AnalysisConfig>({
-    model: 'mistral-ocr-latest',
-    temperature: 0.3
+    model: 'mistral-ocr-latest'
   });
   const [reviewOutput, setReviewOutput] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -26,7 +24,7 @@ function App() {
 
     setIsAnalyzing(true);
     try {
-      // This would normally call the Mistral API
+      // This would normally call the Mistral API with temperature: 0.8
       // For now, we'll show a placeholder response
       const mockResponse = `
 # Executive Summary

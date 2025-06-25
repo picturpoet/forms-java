@@ -1,6 +1,5 @@
 interface AnalysisConfig {
   model: string;
-  temperature: number;
 }
 
 interface ConfigPanelProps {
@@ -35,30 +34,10 @@ export function ConfigPanel({ config, onConfigChange }: ConfigPanelProps) {
         </select>
       </div>
 
-      {/* Temperature Slider */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Analysis Creativity: {config.temperature}
-        </label>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          value={config.temperature}
-          onChange={(e) => onConfigChange({ ...config, temperature: parseFloat(e.target.value) })}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-        />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>Strict (0.0)</span>
-          <span>Creative (1.0)</span>
-        </div>
-      </div>
-
       {/* Info Box */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-xs text-blue-800">
-          <strong>Mistral OCR</strong> is recommended for Form APR analysis as it can extract text directly from PDF images.
+          <strong>Mistral OCR</strong> is recommended for Form APR analysis as it can extract text directly from PDF images. Analysis creativity is set to 0.8 for optimal results.
         </p>
       </div>
     </div>
