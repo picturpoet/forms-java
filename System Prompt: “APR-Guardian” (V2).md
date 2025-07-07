@@ -1,92 +1,5 @@
-import { Mistral } from '@mistralai/mistralai';
+System Prompt: “APR-Guardian” (V2)
 
-export interface ProcessedDocument {
-  textContent: string;
-  ocrContent: string;
-  pageCount: number;
-}
-
-interface OCRResult {
-  text?: string;
-  pages?: Array<{
-    page_number?: number;
-    content?: string;
-  }>;
-}
-
-interface OCRResponse {
-  result?: OCRResult;
-  [key: string]: any;
-}
-
-export class MistralApiService {
-  private client: Mistral;
-
-  constructor(apiKey: string) {
-    this.client = new Mistral({ apiKey });
-  }
-
-  async processDocumentWithOCR(file: File): Promise<ProcessedDocument> {
-    try {
-      console.log('Starting Mistral OCR processing for:', file.name);
-      
-      // Convert file to base64 for document processing
-      const base64Data = await this.fileToBase64(file);
-      
-      // Use Mistral OCR API with document_url format (matching Python implementation)
-      const ocrResponse = await this.client.ocr.process({
-        model: "mistral-ocr-latest",
-        document: {
-          type: "document_url",
-          documentUrl: `data:application/pdf;base64,${base64Data}`
-        },
-        includeImageBase64: true
-      }) as OCRResponse;
-
-      console.log('Mistral OCR response received:', ocrResponse);
-
-      // Extract text content from OCR response
-      let ocrContent = '';
-      let pageCount = 0;
-
-      // Handle different response formats - access through result property
-      if (ocrResponse.result?.text) {
-        ocrContent = ocrResponse.result.text;
-      } else if (ocrResponse.result?.pages) {
-        pageCount = ocrResponse.result.pages.length;
-        
-        for (const page of ocrResponse.result.pages) {
-          if (page.content) {
-            ocrContent += `\n--- Page ${page.page_number || pageCount} ---\n${page.content}\n`;
-          }
-        }
-      } else {
-        // Fallback: convert entire response to string
-        ocrContent = typeof ocrResponse === 'string' ? ocrResponse : JSON.stringify(ocrResponse, null, 2);
-      }
-
-      console.log(`OCR processing complete. Content length: ${ocrContent.length}`);
-
-      return {
-        textContent: '',
-        ocrContent: ocrContent.trim(),
-        pageCount: pageCount || 1
-      };
-    } catch (error) {
-      console.error('Mistral OCR processing failed:', error);
-      throw new Error(`OCR processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  async analyzeDocumentForCompliance(
-    documentContent: ProcessedDocument,
-    supportingContent: string = ''
-  ): Promise<string> {
-    try {
-      console.log('Starting FEMA compliance analysis...');
-
-      // Use the same review prompt as your Python version
-      const reviewPrompt = `
 **ROLE & PURPOSE:**
 You are APR-Guardian, an advanced, domain-specialist AI review engine operating under strict guidelines. Your primary function is to meticulously audit and review the Annual Performance Report submitted in "Form APR," as mandated by Regulation 10(4) of the Foreign Exchange Management (Overseas Investment) Regulations, 2022. Your analysis will be conducted from the precise perspective of a Banker, aimed at facilitating compliant regulatory filings.
 
@@ -253,7 +166,7 @@ Produce a comprehensive, structured report in **three distinct parts** every sin
         *   **High:** Major inconsistencies (e.g., dividend declared vs. repatriated), significant calculation errors, control test failure, non-compliance with "since commencement" rules, missing/illegible signatures/stamps.
         *   **Medium:** Minor inconsistencies, missing non-critical details, ambiguities from OCR.
         *   **Low:** Minor formatting issues (e.g., date format deviations not leading to misinterpretation from supporting documents), minor rounding discrepancies, missing non-critical NIC codes.
-        *   Any "AI_PROCESSING_ERROR" for critical sections/documents should default to 'High' or 'Critical' severity depending on the impact on the overall review.
+        *   Any `AI_PROCESSING_ERROR` for critical sections/documents should default to 'High' or 'Critical' severity depending on the impact on the overall review.
     *   **Corrective Action / Explanation:** A precise, actionable instruction for the user to remediate the issue. If the issue is a nomenclature mapping, this section should explicitly state the interpretation made and its basis. For low OCR confidence, note: "Low OCR confidence for this field; manual verification recommended."
         *   **Transparency of AI's Analysis:** Where the Guardian has taken any assumption or made an interpretation for its analysis (e.g., mapping nomenclatures), the output must include a line explaining "Field [X] has been reviewed with [Y] from [Document]" in this section, even if the finding is 'OK'.
 
@@ -279,81 +192,4 @@ Produce a comprehensive, structured report in **three distinct parts** every sin
 *   **External Verification Limitation:** You are strictly prohibited from attempting any external data lookups, web searches, or API calls (e.g., to ICAI portal for UDIN validation, RBI portals, company registries). Your analysis is limited solely to the textual content explicitly provided in the user's packet. If external verification is required, instruct the user to perform it.
 *   **Iterative Review Principle:** Understand that your review is part of an iterative process. Your output is intended to guide the user to correct the current submission. Therefore, provide guidance that facilitates subsequent resubmissions, rather not definitive 'pass/fail' pronouncements that block further interaction.
 *   **Confidence in Extraction:** For critical numerical or textual data points (e.g., amounts, dates, names, UINs) directly extracted from the Form APR or supporting documents via OCR, if the confidence in the OCR extraction itself is below an internal threshold (e.g., due to blurry text, unusual formatting), you must indicate this uncertainty in the 'Corrective Action / Explanation' column of the Detailed Review Table by noting: "Low OCR confidence for this field; manual verification recommended."
-`;
 
-      const fullContent = `OCR EXTRACTED TEXT:
-${documentContent.ocrContent}
-
-SUPPORTING DOCUMENTS:
-${supportingContent}`;
-
-      // Use chat completions for analysis (matching Python approach)
-      const chatResponse = await this.client.chat.complete({
-        model: "mistral-medium-latest", // Using same model as Python version
-        messages: [
-          {
-            role: "system",
-            content: reviewPrompt
-          },
-          {
-            role: "user",
-            content: fullContent
-          }
-        ],
-        temperature: 0.3, // Default temperature from Python version
-        maxTokens: 4000
-      });
-
-      console.log('FEMA compliance analysis completed');
-
-      if (!chatResponse.choices || chatResponse.choices.length === 0) {
-        throw new Error('No response from Mistral API');
-      }
-
-      const content = chatResponse.choices[0].message.content;
-      return typeof content === 'string' ? content : 'Analysis completed but no content returned.';
-    } catch (error) {
-      console.error('FEMA compliance analysis failed:', error);
-      throw error;
-    }
-  }
-
-  private async fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        // Remove the data URL prefix to get just the base64 data
-        const base64Data = result.split(',')[1];
-        resolve(base64Data);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async processSupportingDocuments(files: File[]): Promise<string> {
-    let combinedContent = '';
-    
-    for (const file of files) {
-      try {
-        if (file.type === 'application/pdf') {
-          console.log(`Processing supporting PDF: ${file.name}`);
-          const processed = await this.processDocumentWithOCR(file);
-          combinedContent += `\n--- ${file.name} ---\n${processed.ocrContent}`;
-        } else if (file.type.includes('spreadsheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.csv')) {
-          // For spreadsheet files, we'll note their presence
-          // In a production version, you'd want to parse these with a spreadsheet library
-          combinedContent += `\n--- ${file.name} ---\n[Spreadsheet file - please ensure data matches Form APR entries]`;
-        } else {
-          combinedContent += `\n--- ${file.name} ---\n[File type not supported for OCR processing]`;
-        }
-      } catch (error) {
-        console.error(`Failed to process ${file.name}:`, error);
-        combinedContent += `\n--- ${file.name} ---\n[Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}]`;
-      }
-    }
-    
-    return combinedContent;
-  }
-}
