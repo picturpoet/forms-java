@@ -101,7 +101,7 @@ export function LandingPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
                       <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
                         <Brain className="w-8 h-8 text-green-600 mx-auto mb-2" strokeWidth={2} />
-                        <p className="text-sm text-green-700 font-medium">AI OCR Analysis</p>
+                        <p className="text-sm text-green-700 font-medium">Document Analysis</p>
                       </div>
                       <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center shadow-card hover:shadow-lg transition-all duration-200 transform hover:-translate-y-[1px]">
                         <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" strokeWidth={2} />
@@ -191,7 +191,7 @@ export function LandingPage() {
             <CardTile
               icon={Brain}
               title="AI-Powered"
-              description="Advanced OCR and document analysis using state-of-the-art Mistral AI models for precision."
+              description="Advanced document analysis using state-of-the-art AI from Regality for precision."
             />
           </div>
 

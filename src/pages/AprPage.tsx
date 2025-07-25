@@ -41,7 +41,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
       const mistralService = new MistralApiService(apiKey);
 
       // Step 1: Process the main Form APR with Mistral OCR
-      setAnalysisProgress('Processing Form APR with Mistral OCR...');
+      setAnalysisProgress('Regal AI is now processing your form...');
       const mainDocument = await mistralService.processDocumentWithOCR(formPdf);
       
       console.log('Main document processed:', {
@@ -128,7 +128,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
             {/* Fixed subline with high contrast */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 inline-block shadow-card border border-grey/10">
               <p className="text-xl text-text font-medium">
-                AI-driven FEMA compliance review powered by Mistral OCR
+                FEMA Compliance Review powered by Regal AI
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@ The Mistral API key is not configured. Please contact the administrator to set u
                     </p>
                   </div>
                   <p className="text-text-light text-sm">
-                    Using official Mistral OCR API (mistral-ocr-latest)
+                    Using Regal AI.
                   </p>
                 </div>
               )}

@@ -28,7 +28,7 @@ export class MistralApiService {
 
   async processDocumentWithOCR(file: File): Promise<ProcessedDocument> {
     try {
-      console.log('Starting Mistral OCR processing for:', file.name);
+      console.log('Document processing for:', file.name);
       
       // Convert file to base64 for document processing
       const base64Data = await this.fileToBase64(file);
@@ -43,7 +43,7 @@ export class MistralApiService {
         includeImageBase64: true
       }) as OCRResponse;
 
-      console.log('Mistral OCR response received:', ocrResponse);
+      console.log('Document response received:', ocrResponse);
 
       // Extract text content from OCR response
       let ocrContent = '';
@@ -65,7 +65,7 @@ export class MistralApiService {
         ocrContent = typeof ocrResponse === 'string' ? ocrResponse : JSON.stringify(ocrResponse, null, 2);
       }
 
-      console.log(`OCR processing complete. Content length: ${ocrContent.length}`);
+      console.log(`Document processing complete. Content length: ${ocrContent.length}`);
 
       return {
         textContent: '',
@@ -267,7 +267,7 @@ ${supportingContent}`;
           // In a production version, you'd want to parse these with a spreadsheet library
           combinedContent += `\n--- ${file.name} ---\n[Spreadsheet file - please ensure data matches Form APR entries]`;
         } else {
-          combinedContent += `\n--- ${file.name} ---\n[File type not supported for OCR processing]`;
+          combinedContent += `\n--- ${file.name} ---\n[File type not supported for Document processing]`;
         }
       } catch (error) {
         console.error(`Failed to process ${file.name}:`, error);
