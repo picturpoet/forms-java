@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
 import { ReviewOutput } from '../components/ReviewOutput';
 import { MistralApiService } from '../services/mistralApi';
-import { FileText, Upload, ChevronUp, ChevronDown, AlertCircle, FileEdit } from 'lucide-react';
+import { FileText, Upload, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/buttons';
 import { Header } from '../components/Header';
 
