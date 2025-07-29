@@ -160,15 +160,16 @@ The Mistral API key is not configured. Please contact the administrator to set u
                   </div>
                 </div>
                 
-                {!isUploadSectionCollapsed && (
-                  <div className="px-8 pb-8">
+                                {!isUploadSectionCollapsed && (
+                  <div className="px-8 pb-8 space-y-6">
                     <FileUpload
                       formPdf={formPdf}
                       supportingFiles={supportingFiles}
                       onFormPdfChange={setFormPdf}
                       onSupportingFilesChange={setSupportingFiles}
                     />
-                  </div>
+                    </div>
+
                 )}
               </div>
 
