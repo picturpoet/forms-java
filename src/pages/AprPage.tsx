@@ -168,73 +168,8 @@ The Mistral API key is not configured. Please contact the administrator to set u
                       onFormPdfChange={setFormPdf}
                       onSupportingFilesChange={setSupportingFiles}
                     />
-
-                    {/* Form Filling (Coming Soon) tile */}
-                    <div
-                      role="region"
-                      aria-label="Form Filling Coming Soon"
-                      className="rounded-2xl border-2 border-dashed border-grey/20 p-6 bg-white/70"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-full bg-mna-yellow/20 flex items-center justify-center">
-                          <FileEdit className="w-5 h-5 text-mna-yellow" strokeWidth={2} />
-                        </div>
-                        <p className="text-text font-semibold">Form Filling</p>
-                      </div>
-
-                      <p className="text-text-light text-sm">
-                        Auto‑fill for APR is not available yet.
-                      </p>
-
-                      <div className="mt-4">
-                        <Button
-                          size="lg"
-                          onClick={() => {
-                            const el = document.getElementById('comingSoonOverlay');
-                            if (el) el.classList.remove('hidden');
-                          }}
-                          className="w-full"
-                        >
-                          Coming Soon
-                        </Button>
-                      </div>
                     </div>
 
-                    {/* Full-page overlay shown on click (no route/state needed) */}
-                    <div
-                      id="comingSoonOverlay"
-                      className="hidden fixed inset-0 z-[1000] bg-white"
-                      role="dialog"
-                      aria-modal="true"
-                      aria-label="Form Filling Coming Soon"
-                    >
-                      <div className="min-h-screen flex items-center justify-center px-6">
-                        <div className="max-w-xl w-full text-center">
-                          <div className="mx-auto w-16 h-16 bg-brand-dark rounded-2xl flex items-center justify-center mb-6 shadow-card">
-                            <FileText className="w-8 h-8 text-white" strokeWidth={2} />
-                          </div>
-                          <h1 className="text-3xl font-bold text-text mb-3">
-                            Form Filling — Coming Soon
-                          </h1>
-                          <p className="text-text-light">
-                            We’re building automatic APR field filling. Check back shortly!
-                          </p>
-
-                          <div className="mt-8 flex justify-center">
-                            <Button
-                              size="lg"
-                              onClick={() => {
-                                const el = document.getElementById('comingSoonOverlay');
-                                if (el) el.classList.add('hidden');
-                              }}
-                            >
-                              Back
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 )}
               </div>
 
