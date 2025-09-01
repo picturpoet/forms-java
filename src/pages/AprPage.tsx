@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
 import { ReviewOutput } from '../components/ReviewOutput';
-import { MistralApiService } from '../services/mistralApi';
-import { FileText, Upload, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
+import { OpenRouterApiService, ANALYSIS_MODELS, AnalysisModel } from '../services/openRouterApi';
+import { FileText, Upload, ChevronUp, ChevronDown, AlertCircle, Settings } from 'lucide-react';
 import { Button } from '../components/ui/buttons';
 import { Header } from '../components/Header';
+import { DiagnosticTest } from '../components/DiagnosticTest';
 
 export function AprPage() {
   const [formPdf, setFormPdf] = useState<File | null>(null);
@@ -13,22 +14,23 @@ export function AprPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [isUploadSectionCollapsed, setIsUploadSectionCollapsed] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<AnalysisModel>('mistral/mistral-medium-latest');
 
   const handleAnalyze = async () => {
     if (!formPdf) return;
 
     // Get API key from environment variables
-    const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
     
     if (!apiKey) {
       setReviewOutput(`# Configuration Error
 
 **Missing API Key**
 
-The Mistral API key is not configured. Please contact the administrator to set up the VITE_MISTRAL_API_KEY environment variable.
+The Open Router API key is not configured. Please contact the administrator to set up the VITE_OPENROUTER_API_KEY environment variable.
 
 **For Administrators:**
-- Add VITE_MISTRAL_API_KEY to your Netlify environment variables
+- Add VITE_OPENROUTER_API_KEY to your Netlify environment variables
 - Redeploy the application after adding the key`);
       return;
     }
@@ -38,11 +40,11 @@ The Mistral API key is not configured. Please contact the administrator to set u
     setIsUploadSectionCollapsed(true); // Collapse upload section when analysis starts
     
     try {
-      const mistralService = new MistralApiService(apiKey);
+      const openRouterService = new OpenRouterApiService(apiKey);
 
-      // Step 1: Process the main Form APR with Mistral OCR
+      // Step 1: Process the main Form APR with Open Router OCR
       setAnalysisProgress('Regal AI is now processing your form...');
-      const mainDocument = await mistralService.processDocumentWithOCR(formPdf);
+      const mainDocument = await openRouterService.processDocumentWithOCR(formPdf);
       
       console.log('Main document processed:', {
         ocrContentLength: mainDocument.ocrContent.length,
@@ -54,15 +56,16 @@ The Mistral API key is not configured. Please contact the administrator to set u
       let supportingContent = '';
       if (supportingFiles.length > 0) {
         setAnalysisProgress('Processing supporting documents...');
-        supportingContent = await mistralService.processSupportingDocuments(supportingFiles);
+        supportingContent = await openRouterService.processSupportingDocuments(supportingFiles);
         console.log('Supporting documents processed, content length:', supportingContent.length);
       }
 
       // Step 3: Perform FEMA compliance analysis
-      setAnalysisProgress('Analyzing document for FEMA compliance...');
-      const analysis = await mistralService.analyzeDocumentForCompliance(
+      setAnalysisProgress(`Analyzing document for FEMA compliance with ${ANALYSIS_MODELS[selectedModel]}...`);
+      const analysis = await openRouterService.analyzeDocumentForCompliance(
         mainDocument,
-        supportingContent
+        supportingContent,
+        selectedModel
       );
 
       setReviewOutput(analysis);
@@ -77,12 +80,12 @@ The Mistral API key is not configured. Please contact the administrator to set u
       if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
         errorReport += `**Possible causes:**
 - Invalid API key configuration
-- API key doesn't have access to Mistral OCR
+- API key doesn't have access to required models
 - API key has expired
 
 **Solutions:**
 - Contact administrator to verify API key configuration
-- Check if the Mistral account has OCR access enabled
+- Check if the Open Router account has access to required models
 - Administrator may need to generate a new API key`;
       } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
         errorReport += `**Rate limit exceeded**
@@ -171,6 +174,43 @@ The Mistral API key is not configured. Please contact the administrator to set u
                     </div>
 
                 )}
+              </div>
+
+              {/* Diagnostic Test Component */}
+              <DiagnosticTest />
+
+              {/* Model Selection */}
+              <div className="bg-white rounded-2xl shadow-card border border-grey/10">
+                <div className="p-8">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-mna-orange/20 rounded-xl flex items-center justify-center">
+                      <Settings className="w-6 h-6 text-mna-orange" strokeWidth={2} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-text">
+                      Analysis Model
+                    </h3>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-text mb-3">
+                      Choose AI Model for Analysis
+                    </label>
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value as AnalysisModel)}
+                      className="w-full p-4 border border-grey/30 rounded-xl bg-white text-text focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20 focus:outline-none transition-all"
+                      disabled={isAnalyzing}
+                    >
+                      {Object.entries(ANALYSIS_MODELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-sm text-text-light mt-2">
+                      Test different models to find the best one for your compliance analysis needs.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Analyze Button */}
