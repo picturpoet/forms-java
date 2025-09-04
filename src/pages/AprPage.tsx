@@ -20,17 +20,17 @@ export function AprPage() {
     if (!formPdf) return;
 
     // Get API key from environment variables
-    const apiKey = import.meta.env.OPENROUTER_API_KEY;
+    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
     
     if (!apiKey) {
       setReviewOutput(`# Configuration Error
 
 **Missing API Key**
 
-The Open Router API key is not configured. Please contact the administrator to set up the OPENROUTER_API_KEY environment variable.
+The Open Router API key is not configured. Please contact the administrator to set up the VITE_OPENROUTER_API_KEY environment variable.
 
 **For Administrators:**
-- Add OPENROUTER_API_KEY to your Netlify environment variables
+- Add VITE_OPENROUTER_API_KEY to your Netlify environment variables
 - Redeploy the application after adding the key`);
       return;
     }

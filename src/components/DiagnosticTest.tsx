@@ -14,7 +14,7 @@ export function DiagnosticTest() {
   const runDiagnostic = async () => {
     setIsRunning(true);
     const results: typeof testResults = {
-      apiKeyPresent: !!import.meta.env.OPENROUTER_API_KEY
+      apiKeyPresent: !!import.meta.env.VITE_OPENROUTER_API_KEY
     };
 
     if (results.apiKeyPresent) {
@@ -23,7 +23,7 @@ export function DiagnosticTest() {
         const testResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${import.meta.env.OPENROUTER_API_KEY}`,
+            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
             "Content-Type": "application/json",
             "HTTP-Referer": window.location.origin,
             "X-Title": "Form APR Reconciler - Diagnostic Test"
