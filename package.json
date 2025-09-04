@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:functions && tsc && vite build",
-    "build:functions": "tsc -p netlify/functions/tsconfig.json",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@mistralai/mistralai": "^1.2.0",
     "@netlify/functions": "^4.2.5",
+    "@types/node-fetch": "^2.6.13",
     "clsx": "^2.1.1",
     "lucide-react": "^0.263.1",
+    "node-fetch": "^3.3.2",
     "openai": "^5.16.0",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.0.379",

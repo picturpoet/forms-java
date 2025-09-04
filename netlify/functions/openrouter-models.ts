@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions';
+import fetch from 'node-fetch';
 
 const handler: Handler = async (event) => {
   // Enable CORS for frontend requests
