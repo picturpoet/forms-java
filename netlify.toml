@@ -4,7 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  SECRETS_SCAN_OMIT_KEYS = "VITE_OPENROUTER_API_KEY"
+
+[functions]
+  directory = "netlify/functions"
 
 [[redirects]]
   from = "/*"
@@ -40,3 +42,4 @@
 
 # Environment variables (set these in Netlify dashboard)
 # VITE_MISTRAL_API_KEY = "your-mistral-api-key-here"
+# OPENROUTER_API_KEY = "your-openrouter-api-key-here" (server-side only)

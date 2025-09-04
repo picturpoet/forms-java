@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+// Removed OpenAI import - now using Netlify Functions proxy
 
 export interface ProcessedDocument {
   textContent: string;
@@ -20,17 +20,11 @@ export const ANALYSIS_MODELS = {
 export type AnalysisModel = keyof typeof ANALYSIS_MODELS;
 
 export class OpenRouterApiService {
-  private client: OpenAI;
+  private baseUrl: string;
 
-  constructor(apiKey: string) {
-    this.client = new OpenAI({
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: apiKey,
-      defaultHeaders: {
-        "HTTP-Referer": window.location.origin,
-        "X-Title": "Form APR Reconciler"
-      }
-    });
+  constructor() {
+    // Use Netlify Functions as proxy (no API key needed on client)
+    this.baseUrl = window.location.origin + '/.netlify/functions';
   }
 
   async processDocumentWithOCR(file: File): Promise<ProcessedDocument> {
@@ -43,14 +37,11 @@ export class OpenRouterApiService {
       let response;
       
       try {
-        // Use OpenRouter's PDF processing with fetch API for better control
-        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        // Use Netlify Function proxy for OpenRouter API calls
+        const openRouterResponse = await fetch(`${this.baseUrl}/openrouter-chat`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${this.client.apiKey}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": window.location.origin,
-            "X-Title": "Form APR Reconciler"
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             model: "openai/gpt-4o",
@@ -85,7 +76,8 @@ export class OpenRouterApiService {
         });
 
         if (!openRouterResponse.ok) {
-          throw new Error(`OpenRouter API error: ${openRouterResponse.status} ${openRouterResponse.statusText}`);
+          const errorText = await openRouterResponse.text();
+          throw new Error(`OpenRouter API error: ${openRouterResponse.status} ${openRouterResponse.statusText} - ${errorText}`);
         }
 
         response = await openRouterResponse.json();
@@ -93,27 +85,40 @@ export class OpenRouterApiService {
         console.warn('Plugin approach failed, trying direct multimodal approach:', pluginError);
         
         // Fallback to direct multimodal approach with image_url
-        response = await this.client.chat.completions.create({
-          model: "openai/gpt-4o",
-          messages: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: "Extract all text content from this PDF document. Preserve formatting and structure as much as possible. Include page numbers where visible."
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: `data:application/pdf;base64,${base64Data}`
+        const fallbackResponse = await fetch(`${this.baseUrl}/openrouter-chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "openai/gpt-4o",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: "Extract all text content from this PDF document. Preserve formatting and structure as much as possible. Include page numbers where visible."
+                  },
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:application/pdf;base64,${base64Data}`
+                    }
                   }
-                }
-              ]
-            }
-          ],
-          max_tokens: 4000
+                ]
+              }
+            ],
+            max_tokens: 4000
+          })
         });
+
+        if (!fallbackResponse.ok) {
+          const errorText = await fallbackResponse.text();
+          throw new Error(`OpenRouter API error: ${fallbackResponse.status} ${fallbackResponse.statusText} - ${errorText}`);
+        }
+
+        response = await fallbackResponse.json();
       }
 
       console.log('OCR response received:', response);
@@ -277,30 +282,43 @@ ${documentContent.ocrContent}
 SUPPORTING DOCUMENTS:
 ${supportingContent}`;
 
-      // Use OpenRouter for analysis with selected model
-      const chatResponse = await this.client.chat.completions.create({
-        model: model,
-        messages: [
-          {
-            role: "system",
-            content: reviewPrompt
-          },
-          {
-            role: "user",
-            content: fullContent
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 4000
+      // Use Netlify Function proxy for analysis with selected model
+      const chatResponse = await fetch(`${this.baseUrl}/openrouter-chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            {
+              role: "system",
+              content: reviewPrompt
+            },
+            {
+              role: "user",
+              content: fullContent
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 4000
+        })
       });
+
+      if (!chatResponse.ok) {
+        const errorText = await chatResponse.text();
+        throw new Error(`OpenRouter API error: ${chatResponse.status} ${chatResponse.statusText} - ${errorText}`);
+      }
+
+      const chatResponseData = await chatResponse.json();
 
       console.log(`FEMA compliance analysis completed with ${model}`);
 
-      if (!chatResponse.choices || chatResponse.choices.length === 0) {
+      if (!chatResponseData.choices || chatResponseData.choices.length === 0) {
         throw new Error('No response from OpenRouter API');
       }
 
-      const content = chatResponse.choices[0].message?.content;
+      const content = chatResponseData.choices[0].message?.content;
       return typeof content === 'string' ? content : 'Analysis completed but no content returned.';
     } catch (error) {
       console.error('OpenRouter compliance analysis failed:', error);
