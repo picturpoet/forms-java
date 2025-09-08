@@ -8,50 +8,46 @@ export function DiagnosticTest() {
     apiKeyPresent: boolean;
     connectionTest?: 'success' | 'error';
     error?: string;
-  }>({ apiKeyPresent: false });
+  }>({ apiKeyPresent: true });
   const [isRunning, setIsRunning] = useState(false);
 
   const runDiagnostic = async () => {
     setIsRunning(true);
     const results: typeof testResults = {
-      apiKeyPresent: !!import.meta.env.VITE_OPENROUTER_API_KEY
+      apiKeyPresent: true // Always true since we use server-side proxy
     };
 
-    if (results.apiKeyPresent) {
-      try {
-        // Test with a simple chat completion (not OCR to keep it simple)
-        const testResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": window.location.origin,
-            "X-Title": "Form APR Reconciler - Diagnostic Test"
-          },
-          body: JSON.stringify({
-            model: "mistral/mistral-medium-latest",
-            messages: [
-              {
-                role: "user",
-                content: "Hello! This is a test connection. Please respond with 'Connection successful!'"
-              }
-            ],
-            max_tokens: 50
-          })
-        });
+    try {
+      // Test connection through our Netlify Function proxy
+      const testResponse = await fetch(`${window.location.origin}/.netlify/functions/openrouter-chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "mistral/mistral-medium-latest",
+          messages: [
+            {
+              role: "user",
+              content: "Hello! This is a test connection. Please respond with 'Connection successful!'"
+            }
+          ],
+          max_tokens: 50
+        })
+      });
 
-        if (testResponse.ok) {
-          const data = await testResponse.json();
-          results.connectionTest = 'success';
-          console.log('Test response:', data);
-        } else {
-          results.connectionTest = 'error';
-          results.error = `HTTP ${testResponse.status}: ${testResponse.statusText}`;
-        }
-      } catch (error) {
+      if (testResponse.ok) {
+        const data = await testResponse.json();
+        results.connectionTest = 'success';
+        console.log('Test response:', data);
+      } else {
+        const errorText = await testResponse.text();
         results.connectionTest = 'error';
-        results.error = error instanceof Error ? error.message : 'Unknown error';
+        results.error = `HTTP ${testResponse.status}: ${testResponse.statusText} - ${errorText}`;
       }
+    } catch (error) {
+      results.connectionTest = 'error';
+      results.error = error instanceof Error ? error.message : 'Unknown error';
     }
 
     setTestResults(results);
@@ -72,7 +68,7 @@ export function DiagnosticTest() {
             <AlertCircle className="w-5 h-5 text-red-600" />
           )}
           <span className="text-sm">
-            API Key Present: {testResults.apiKeyPresent ? 'Yes' : 'No'}
+            Server Configuration: {testResults.apiKeyPresent ? 'Ready' : 'Error'}
           </span>
         </div>
 

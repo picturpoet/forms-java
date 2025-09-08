@@ -19,28 +19,13 @@ export function AprPage() {
   const handleAnalyze = async () => {
     if (!formPdf) return;
 
-    // Get API key from environment variables
-    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-    
-    if (!apiKey) {
-      setReviewOutput(`# Configuration Error
-
-**Missing API Key**
-
-The Open Router API key is not configured. Please contact the administrator to set up the VITE_OPENROUTER_API_KEY environment variable.
-
-**For Administrators:**
-- Add VITE_OPENROUTER_API_KEY to your Netlify environment variables
-- Redeploy the application after adding the key`);
-      return;
-    }
-
     setIsAnalyzing(true);
     setReviewOutput('');
     setIsUploadSectionCollapsed(true); // Collapse upload section when analysis starts
     
     try {
-      const openRouterService = new OpenRouterApiService(apiKey);
+      // No API key needed - using Netlify Functions proxy
+      const openRouterService = new OpenRouterApiService();
 
       // Step 1: Process the main Form APR with Open Router OCR
       setAnalysisProgress('Regal AI is now processing your form...');

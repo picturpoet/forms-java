@@ -5,6 +5,9 @@
 [build.environment]
   NODE_VERSION = "18"
 
+[functions]
+  directory = "netlify/functions"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -39,3 +42,4 @@
 
 # Environment variables (set these in Netlify dashboard)
 # VITE_MISTRAL_API_KEY = "your-mistral-api-key-here"
+# OPENROUTER_API_KEY = "your-openrouter-api-key-here" (server-side only)
